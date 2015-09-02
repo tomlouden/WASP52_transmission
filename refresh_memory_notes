@@ -1,0 +1,5 @@
+Don't panic...
+
+in "spot_model.py" there's a nice piece of code to demonstrate the effects of adding spots to the lightcurve using ATLAS models.
+
+started moving all the relevent code to TML/spotty_transits. I want this to be githubbed and to have an easy transfer to the new datasets.

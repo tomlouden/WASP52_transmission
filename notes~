@@ -1,0 +1,1624 @@
+set an apperture of +-25 pixels on the apperture 1
+
+fitted a sixth order chebyshev with a 2 sigma clip for the background in the region +-200 pixels. There's a lot of structure in the background, but I think this is a fair fit.
+
+set an apperture of +-100 pixels for apperture 2. this may be too big, but the profile seemed to have some serious wings.
+
+having trouble deciding on the background fit for this region, as there does seem to be large wings around the line. tempted to fit a profile to the whole image.
+used 5th order polynomial, 50 repeats, 1 sigma cut on ENTIRE FRAME. I think this gives a good idea of the bulk background profile, hopefully being insensitive to changes
+in the profile.
+
+r2127382_cal is the image where I've defined the appertures.
+
+fit apperture: 4th order, 3 sigma clip, iterate 10
+
+trouble tracing the curve, change rejection cut to 2 sigma instead of 3
+
+the 200 pixel wide apperture and big sky subtraction boxes was making iraf crash... switched apperture 2 to +-25 pixels, added placeholder background subtraction but not happy with it
+
+a couple of errors have popped up while running, about spectra variance being too big... could be a problem.
+
+to do tomorrow: sort out the normalisation of the two nights relative to each other.
+		make sure that we're using hjd and not just jd
+
+allow the zeroth order of the airmass polynomial to be different for the two nights, but not the higher orders. this seems fair to me.
+
+repeating everything with a consistent extraction routine.
+
++- 25 aperture 1
++- 50 aperture 2
+
+background 100-150, -100 - -150 on both
+
+to do tomorrow:
+
+		Finish processing second extraction (quick_look4, quick_look_pete2), extract the arcs
+		streamline extraction process - take everything from a fits file, get rid of all the wspectxt steps if possible.
+
+not possible to simplify process, since iraf assigns wavelength solutions internally unless you do the text output
+
+want to test difference between interpolated and non-interpolated spectra, so extracted "spec2" which is non-interpolated. compare output.
+
+
+LINEARIZED DATA, BAND 1 ('CLEAN')
+---------------------------------
+
+white depth = 0.170218255488
+blue depth = 0.164070181382
+green depth = 0.164047344131
+red depth = 0.164110277801
+Chi2 for hypothesis of flat (b,g,r):
+1371.61233726 1778.87864374 1694.44341625
+fractional rms (b,g,r):
+0.0286585329144 0.0313389674828 0.0308146737949
+over the timescale of a transit, that's(b,g,r):
+0.0021360809244 0.00233586872121 0.002296790177
+giving OTOO this significance per scale height (assume scale height ~ 1e-4) (b,g,r)
+0.046814705781 0.0428106250544 0.0435390228509
+
+combined_data_2_linearized.pdf
+
+NOT-LINEARIZED DATA, BAND 1 ('CLEAN')
+-------------------------------------
+
+white depth = 0.170405954263
+blue depth = 0.164234797487
+green depth = 0.164391245613
+red depth = 0.164341646856
+Chi2 for hypothesis of flat (b,g,r):
+1344.99356139 1757.51156631 1716.12761028
+fractional rms (b,g,r):
+0.0284067004586 0.0315037370559 0.0312994680113
+over the timescale of a transit, that's(b,g,r):
+0.0021173104414 0.00234814992007 0.00233292460443
+giving OTOO this significance per scale height (assume scale height ~ 1e-4) (b,g,r)
+0.0472297297764 0.0425867186525 0.042864651438
+
+combined_data_2_non_linearized.pdf
+
+I see no particular difference between turning linearization on/off
+
+try looking for a difference between using band1 and band2, band1 has had some additional weighting and cleaning applied, this may have increased S/N of
+each individual spectrum at the expense of adding variability between them. maybe, but I doubt this is the issue...
+
+FUUCK YEAH!!! the problem was in allowing iraf to "clean" my data. this was introducing additional fram to frame noise.
+
+look at *_FIXED.pdf for comparison.
+
+now just have to improve the data fit
+
+Noise source:
+
+Quantized? quantized.pdf. I wonder if this is caused by my bin diameter changing size, should include fractional bins if this is the case.
+test this by measuring the actual width of the bins. each pixel is about 3 angrstoms, and I've been using 100 angstrom bins, so 1% errors from
+this are not unreasonable.
+
+sample output:
+
+496.6917809                                                                                                                                                                                                                                                                    
+496.723712284                                                                                                                                                                                                                                                                  
+496.852498171                                                                                                                                                                                                                                                                  
+497.036819456                                                                                                                                                                                                                                                                  
+496.432312454                                                                                                                                                                                                                                                                  
+499.678348959                                                                                                                                                                                                                                                                  
+497.24433225                                                                                                                                                                                                                                                                   
+497.085001726                                                                                                                                                                                                                                                                  
+497.853757709                                                                                                                                                                                                                                                                  
+498.391417691                                                                                                                                                                                                                                                                  
+498.281398                                                                                                                                                                                                                                                                     
+497.920153708                                                                                                                                                                                                                                                                  
+494.155871193                                                                                                                                                                                                                                                                  
+495.600928205                                                                                                                                                                                                                                                                  
+498.279592057                                                                                                                                                                                                                                                                  
+497.490064839                                                                                                                                                                                                                                                                  
+498.433927214                                                                                                                                                                                                                                                                  
+495.258773833                                                                                                                                                                                                                                                                  
+497.59554694                                                                                                                                                                                                                                                                   
+493.783899228                                                                                                                                                                                                                                                                  
+494.594959516                                                                                                                                                                                                                                                                  
+497.080362122                                                                                                                                                                                                                                                                  
+497.918178494                                                                                                                                                                                                                                                                  
+494.117669901                                                                                                                                                                                                                                                                  
+497.951264436                                                                                                                                                                                                                                                                  
+497.535971951                                                                                                                                                                                                                                                                  
+493.88257313                                                                                                                                                                                                                                                                   
+498.591294893                                                                                                                                                                                                                                                                  
+496.368776547                                                                                                                                                                                                                                                                  
+498.053931713                                                                                                                                                                                                                                                                  
+497.981190328                                                                                                                                                                                                                                                                  
+493.55711599                                                                                                                                                                                                                                                                   
+496.997226839                                                                                                                                                                                                                                                                  
+495.168389991                                                                                                                                                                                                                                                                  
+494.833854358                                                                                                                                                                                                                                                                  
+497.295169635                                                                                                                                                                                                                                                                  
+497.946368738                                                                                                                                                                                                                                                                  
+496.605690901                                                                                                                                                                                                                                                                  
+497.191047798                                                                                                                                                                                                                                                                  
+498.979356735                                                                                                                                                                                                                                                                  
+494.420417532                                                                                                                                                                                                                                                                  
+497.216517613                                                                                                                                                                                                                                                                  
+498.005999633                                                                                                                                                                                                                                                                  
+497.280854108                                                                                                                                                                                                                                                                  
+498.14185032                                                                                                                                                                                                                                                                   
+497.58451409                                                                                                                                                                                                                                                                   
+497.544598107                                                                                                                                                                                                                                                                  
+498.517702488                                                                                                                                                                                                                                                                  
+498.067840071                                                                                                                                                                                                                                                                  
+498.010502512                                                                                                                                                                                                                                                                  
+493.935108011                                                                                                                                                                                                                                                                  
+497.944523532                                                                                                                                                                                                                                                                  
+498.127315925                                                                                                                                                                                                                                                                  
+497.442044755                                                                                                                                                                                                                                                                  
+497.431963099                                                                                                                                                                                                                                                                  
+493.958359079                                                                                                                                                                                                                                                                  
+497.113412204                                                                                                                                                                                                                                                                  
+494.273115814                                                                                                                                                                                                                                                                  
+495.104914268                                                                                                                                                                                                                                                                  
+497.863921904                                                                                                                                                                                                                                                                  
+495.195064923                                                                                                                                                                                                                                                                  
+493.947837472                                                                                                                                                                                                                                                                  
+497.33863465                                                                                                                                                                                                                                                                   
+498.009438427                                                                                                                                                                                                                                                                  
+497.147845417                                                                                                                                                                                                                                                                  
+495.63587777                                                                                                                                                                                                                                                                   
+498.413146451                                                                                                                                                                                                                                                                  
+497.958402996
+498.396269571
+495.316031673
+493.63584055
+497.242082994
+493.914055083
+497.243124749
+497.616053055
+498.070716737
+497.032509609
+497.469542714
+497.925012128
+497.249916779
+495.969266338
+498.026923273
+494.878248366
+498.3188112
+497.961732706
+496.110864916
+496.527921755
+493.743327138
+498.914000384
+496.802707452
+498.378141017
+494.808718802
+498.261182535
+497.545453687
+497.552203215
+497.520138932
+495.713481346
+497.042337903
+494.174172409
+497.957763716
+497.5481098
+497.937965832
+493.564911426
+496.743831701
+498.048661497
+498.39040493
+498.201350708
+498.200213607
+497.273680793
+497.581671905
+497.946345171
+497.605559071
+497.541792439
+497.741569742
+496.209879068
+498.377567196
+497.925603053
+494.370239896
+493.815471657
+494.28099943
+498.260662576
+494.758003182
+497.330027857
+498.304812977
+497.240776598
+497.594426
+496.902317676
+495.713040539
+497.204091063
+495.459600907
+498.163038492
+497.847625192
+493.847147962
+495.056158057
+498.772253295
+497.096056728
+498.055778872
+497.56739258
+493.944572759
+493.79799728
+
+as predicted, there's a ~ 1% variation on some of those points, which could easily correspond to a 1% flux variation. add something to fix this.
+
+fractional pixel bin.
+
+attempts to add fractional pixels so far have been very unsucessful, only injecting a great deal more noise.
+
+next posibility: error in the wavelength solution. recall, the RMS from IRAF was 2-3 angstrom, the scale of a pixel - one pixel can hold a reasonable
+portion of the flux in the bin.
+how to fix? assume drift in wavelength solution is smaller than the error in it? pick ranges at the start instead of moving box back and forth -
+no, this won't work, each starts/ends in slightly different place, has slightly different deltas from angle.
+
+is not centroiding - chose the box to be way bigger than the width
+
+diagnosing the problem:
+
+Does not effect all colours simultaneously
+
+Try the iraf sarith again, just in case that's being sensible once more
+it's definitely not as good, still lots of noise. probably because when creating the lightcurve we're adding ratios instead of adding photons...
+
+that's a good point, at the moment the lightcurves are not weighted at all before combining... might this help? weight by variance? at the moment if
+there's one crazy high value it will swamp out the others...
+
+there are definitely a few big outlier points, but I'm not sure if it's enough to explain the problems...
+on the other hand, it definitely seems to me that there might be a problem with the wavelength solution, it really does not look that stable.
+I would say that there is easily a 20 A difference between the two nights, and a steady drift within each night. (see wavelength_solution_wrong.png)
+
+The absolute wavelength solution is not very important, it's the relative difference between the frames that matter. solve by cross-corelation instead?
+
+standard cross correlation is doomed, I think, the gradients can be different between different spectra, it's a mess. instead measure line positions with
+gauss curves, bitch. there's a nice one between 6600 6800 but I'm pretty sure it's telluric so not necessarily stable... still, good enough for now.
+
+Our resolution is so low that a gaussian should be a very good fit to lines.
+Done this using the line between 6600 and 6800 (sodium?), and by eye the spectra are much better lined up. does this impact the results?
+
+with correction
+
+white depth = 0.163995037518
+blue depth = 0.166877944974
+green depth = 0.168102315626
+red depth = 0.164032805039
+Chi2 for hypothesis of flat (b,g,r):
+355.434180204 326.127746755 361.819558119
+fractional rms (b,g,r):
+0.013819074793 0.0116865681942 0.0130563403605
+over the timescale of a transit, that's(b,g,r):
+0.00103001302078 0.00087106536353 0.000973162152782
+giving OTOO this significance per scale height (assume scale height ~ 1e-4) (b,g,r)
+0.0970861513229 0.114801947347 0.102757798085
+
+without correction
+
+white depth = 0.16388134366
+blue depth = 0.168673779321
+green depth = 0.166126494504
+red depth = 0.164200631613
+Chi2 for hypothesis of flat (b,g,r):
+300.393052326 313.502958402 331.012119357
+fractional rms (b,g,r):
+0.0127581670927 0.0113007119198 0.0120683480846
+over the timescale of a transit, that's(b,g,r):
+0.000950937629587 0.00084230533489 0.000899521556443
+giving OTOO this significance per scale height (assume scale height ~ 1e-4) (b,g,r)
+0.105159367858 0.118721793461 0.111170209634
+
+hmmph. If anything that's more noisy, but it might be because of one of the hughe outliers that my system seems to have injected.
+next idea: check for cosmics. this might explain the quantization, if it's on average just one or two pixels that are getting hit by cosmics and going
+to very high values, that could explain it.
+
+found the possible reason, apperture one was solving very nicely, but apperture 2 still had some significant wavelength errors. the solver is failing sometimes
+on these systems where the solution has jumped by a significant margin.
+
+try guessing the center by using known values instead. MUCH better, no obvious errors
+
+after fixing this...
+
+white depth = 0.16388140109
+blue depth = 0.163925252586
+green depth = 0.17063967742
+red depth = 0.164332762056
+Chi2 for hypothesis of flat (b,g,r):
+320.845444151 345.006779269 283.432398123
+fractional rms (b,g,r):
+0.0130202692214 0.0117263928735 0.0119635836088
+over the timescale of a transit, that's(b,g,r):
+0.000970473568813 0.000874033719866 0.000891712873456
+giving OTOO this significance per scale height (assume scale height ~ 1e-4) (b,g,r)
+0.103042476594 0.114412061831 0.112143721344
+
+still apparently worse than uncorected... which is very discouraging.
+
+oops, there was a large difference (~50A) between the solution for aperture 1 and 2. fix that. ok, everything now at least looks alligned
+
+white depth = 0.164273522145
+blue depth = 0.168690853526
+green depth = 0.169633948763
+red depth = 0.16468054965
+Chi2 for hypothesis of flat (b,g,r):
+328.14968405 325.084792849 300.321847296
+fractional rms (b,g,r):
+0.0131964096585 0.0116889835344 0.0118550876423
+over the timescale of a transit, that's(b,g,r):
+0.000983602301846 0.000871245392359 0.000883626061577
+giving OTOO this significance per scale height (assume scale height ~ 1e-4) (b,g,r)
+0.101667106525 0.114778225374 0.113170043696
+
+no big improvement in fractional rms, indeed, it still seems to be worse...
+
+let's try running a median filter along to remove cosmics. running median, 3 sigma above that gets you kicked out.
+
+this is messing up the absportion lines, try adding guassian weighting. FWHM seems to be 7 A.
+
+done with guassian
+
+white depth = 0.163841454303
+blue depth = 0.164581342011
+green depth = 0.170236367921
+red depth = 0.16401852396
+Chi2 for hypothesis of flat (b,g,r):
+194.532424894 262.559670202 212.282349505
+fractional rms (b,g,r):
+0.0132136887451 0.0117069146191 0.0118766874048
+over the timescale of a transit, that's(b,g,r):
+0.000984890208921 0.000872581896502 0.000885236012824
+giving OTOO this significance per scale height (assume scale height ~ 1e-4) (b,g,r)
+0.101534159944 0.114602423453 0.112964224852
+
+I think a seperate wavelength correction needs to be done for each colour segment... we're higher than just first order, after all, so shifting back and forth
+isn't going to help us.
+either that, or the 6700 line thats been bugging me has shifted, this is also possible. tellurics.
+
+choose bits of spectrum that don't have big ass absportion lines in them.
+
+use app1_all_alligned.pdf and app2_all_alligned.pdf to pick regions of spectrum that are well behaved and don't have big absorption lines. (tellurics?)
+
+from app1: no obvious lower limit, but of course remember that the wvl solution is less dependable below ~ 5000, also very few photons.
+first "big line" appears at 4956 and 4981: the two values are puzzling, can tellurics shift this much? I don't think so...
+
+the 8350 spectral line is also double valued. I imagine this has something to do with the difference between night one and night two, it does not look like there is a
+continuum of values. other lines seem to me to be well behaved.
+
+red goes crazy at ~8700
+
+spectral line at 8350. try
+
+8400-8600
+
+7800 - 8200 slightly more conservative.
+
+7450 - 7650 also usable
+
+6750 - 6950 is nice.
+
+6050 - 6650 is good
+
+5450 - 5950 is a good middle band.
+
+finish off at 4000 - 4900
+
+do all of these work well in app2?
+
+8400-8600 yes 
+
+7800 - 8200 yes 
+
+7450 - 7650 yes 
+
+6750 - 6950 yes 
+
+6050 - 6650 yes 
+
+5450 - 5950 yes 
+
+finish off at 4000 - 4900
+
+this potentially at least looks a lot better. there seems to me to be less of the systematic noise, though the airmass trend in red is much more pronounced.
+water absorption?
+
+set my guassian smoothing filter to 0.5*FWHM (nyquist) should hopefully get rid of most cosmics.
+
+feel like my airmass fit is doing a pariticularly bad job at the moment.
+
+consider clipping the last 50 A off the red bin, it's particularly bad.
+
+made blue very noise.
+
+white depth = 0.16406221976
+blue depth = 0.164096995491
+green depth = 0.164080426828
+red depth = 0.168116500421
+Chi2 for hypothesis of flat (b,g,r):
+195.814644746 296.580648558 176.049607182
+fractional rms (b,g,r):
+0.0183271886095 0.0130508369174 0.0402698425501
+over the timescale of a transit, that's(b,g,r):
+0.00136602798557 0.000972751950354 0.00300153684618
+giving OTOO this significance per scale height (assume scale height ~ 1e-4) (b,g,r)
+0.0732049423995 0.102801130302 0.033316266008
+
+now clip of 50 A and change FWHM of smoothing to 14 instead of 3.5 (did I get nyquist upside down?)
+
+the sigma clip seems to have done a much better job of getting rid of cosmics (compare narrow smoothing to wide smoothing) and as far as I can tell it has not 
+
+instigate weighted addition... this is a risk, though. could possibly inject signal?
+
+before adding weights
+
+white depth = 0.163397393416
+blue depth = 0.164143083409
+green depth = 0.164063782993
+red depth = 0.167916451284
+Chi2 for hypothesis of flat (b,g,r):
+184.33589897 284.795749132 183.019297297
+fractional rms (b,g,r):
+0.0185096018513 0.0130671603958 0.0121082807671
+over the timescale of a transit, that's(b,g,r):
+0.00137962426586 0.000973968630595 0.000902497962866
+giving OTOO this significance per scale height (assume scale height ~ 1e-4) (b,g,r)
+0.0724835032802 0.102672711275 0.110803574207
+
+after adding weights:
+
+BBBAAAADDD
+
+Weighting is a terrible idea, effectively just adding noise by effectively arbitrarily scaling up or down your 'total measured flux', because you're always on a gradient.
+do not do.
+
+for now, just so we get a nice fit, let's mask out the spot, we can do something cleverer later. mask between 148 and 190 minutes
+
+I really feel like this minimization routine is not doing the best it could be... consider going back to good old leastsq. nope.
+
+so, let's go over this...
+
+in general, second night seems to look a lot better than the first. unless this is a weather effect? this could hint at an extraction based effect.
+
+the amount of noise does depend on the location in the spectrum. not obviously just a photon effect - green band at the moment has approx as many photons
+as the red, but is noisier.
+
+oh! that only fixed the fucking problem! had to correct for partial pixels, little bits overhanging has causing the 'jumps'
+
+the quantized errors are gone!!!!
+
+but we still have a little bit more noise than expected, particularly in blue.
+
+I don't think it's the data... working assumption is that my wavelength callibration is still flawed. may need to cross correlate with multiple lines.
+
+what happens if I pick a different wavelength selection?
+
+I also have to consider doing the cosmic cleaning properly. they should probably be removed from the images BEFORE spectrum is extracted, cosmics are
+a 2 dd spatial phenomena, after all.
+
+Also, how good a job is my cleaning routine doing at the moment?
+
+before:
+
+white depth = 0.164159609595
+blue depth = 0.164114970996
+green depth = 0.163888267399
+red depth = 0.164054727761
+Chi2 for hypothesis of flat (b,g,r):
+188.807237541 270.873132687 165.419331904
+fractional rms (b,g,r):
+0.0115677632391 0.00538504890889 0.00197722664344
+over the timescale of a transit, that's(b,g,r):
+0.000862210165008 0.000401377847415 0.000147373772722
+giving OTOO this significance per scale height (assume scale height ~ 1e-4) (b,g,r)
+0.115981003308 0.249141801532 0.678546787215
+
+after
+
+white depth = 0.165084368752
+blue depth = 0.164002539362
+green depth = 0.163974373343
+red depth = 0.164001656501
+Chi2 for hypothesis of flat (b,g,r):
+173.980606186 256.967098856 167.232064362
+fractional rms (b,g,r):
+0.0115310903013 0.00540825000003 0.00193705693303
+over the timescale of a transit, that's(b,g,r):
+0.000859476725617 0.000403107154646 0.000144379699285
+giving OTOO this significance per scale height (assume scale height ~ 1e-4) (b,g,r)
+0.116349863841 0.248072997086 0.692618148504
+
+it would seem we are getting some mild gains from keeping our rejections. could be more gains by tweaking a little. try a narrower peak...
+
+white depth = 0.164149655462
+blue depth = 0.163904890469
+green depth = 0.164067700784
+red depth = 0.164061556243
+Chi2 for hypothesis of flat (b,g,r):
+185.864408227 267.583922072 166.996355224
+fractional rms (b,g,r):
+0.0115207443604 0.00540348304329 0.00199372519522
+over the timescale of a transit, that's(b,g,r):
+0.000858705584707 0.000402751846669 0.000148603502166
+giving OTOO this significance per scale height (assume scale height ~ 1e-4) (b,g,r)
+0.116454349175 0.248291847268 0.672931650619
+
+worse still. for now, do no cleaning. come back to this later.
+
+APALL has been variance weighting untill now...
+
+fuck.
+
+this is great for producing high quality, high S/N individual spectra... but I'm not convinced that it will preserve all flux.
+
+doing a new extraction.
+
+I think I'm quite happy with the current appertures. the purpose of this extraction is to try using the non-weighted addition, and also to clean the data for cosmics
+
+default xzap parameters are not good enough, been using
+
+r2127419_cal.fit as a comparison image, lots of visible cosmic strikes. the 5 by 5 box is not good enough, many of the cosmics are larger than that.
+
+use a 10x10 box filter instead of the default 5
+
+NO!!!!! this is not going to work as advertised. it's going to be difficult to find the cosmics in the very narrow spectrums. if I make the box too wide it thinks the spectra is the cosmic!
+I think we should stick with our own cosmic removal tool.
+
+turns out turning off my realignment tool makes blue and green a bit worse and red a bit better. want to try aligning based on a line closer to blue, see if it helps
+
+white depth = 0.164609582782
+blue depth = 0.163983453427
+green depth = 0.164007498004
+red depth = 0.163997914919
+Chi2 for hypothesis of flat (b,g,r):
+177.722047382 261.24536854 158.129687361
+fractional rms (b,g,r):
+0.0122420212677 0.00573053983241 0.00189565378123
+over the timescale of a transit, that's(b,g,r):
+0.000912466391221 0.000427129220434 0.000141293690554
+giving OTOO this significance per scale height (assume scale height ~ 1e-4) (b,g,r)
+0.109593077578 0.234121186788 0.707745686363
+
+I've aligned on a line near blue instead. (4850 - 5150) if this works to actually reduce noise on blue, 
+I will consider a full cross corelation to make sure that everything matches properly.
+
+hmm, it helped a little bit but not loads. focus on the region directly around the fitted part?
+
+I think
+
+so if we focus on the region around this line, the noise almost completely disapears on the seconds night (alligned.png) this is enough to convince me, I think,
+that cross corelation is mostly the key.
+
+now to figure out a useful cross corelation code...
+
+flatten the curve (remove airmass ccd chip response etc) then run through numpy.correlate?
+
+no - the wavlength correlation will be second order, you'll have to fit for it.
+
+not many lines because of low res... this is going to be a fucking pain. oh well, let's see how far we get.
+
+hmmm... shortcut. align on that nice central line, then measure the positions of a few more obvious lines.
+
+ok, the non-variance weighted extraction is done, analyse this later
+
+trying to correct the wavelength callibration.
+
+err... wow. this already looks a hell of a lot better! on the second night, at least...
+
+but the first night is still fucked up! WHY?
+
+let's take a step back and quantify exactly what's going on. is it the callibration that's improving the second night?
+
+running again with NO corrections, but centered on the same region.
+
+looks HIDEOS still, and i don't think my other corrections had any noticable effect... nothing obvious at least
+
+alright, let's clear this up. plot all the first night stuff, then all the second night stuff. this might make it easier to see where the errors are coming from.
+
+nothing obvious.
+
+I am begining to believe that it might simply be a bad wavelength callibration. pay more attention to them, particularly since it seems to effect blue much worse than red.
+
+try using second nights callibration? (since it obviously works)
+
+If I could get the S/N on the first night as high as the second that would be a huge improvement
+
+so there is no obvious difference between the wavelength callibration frame on the two nights, except that there is certainly an offset. more evidence that we
+probably should not be using the same wavelength frame all night, or at least that we should be cross correlating.
+
+it is entirely possible that I just cocked up the callibration, there might be nothing wrong with the data.
+
+it's also possible that the variance weighting messes up the flux measurement when the total flux is low/more background...
+
+ok, so we've re-extracted, and.... green is very improved, blue is a bit better, but still not fantastic... still, I think this shows that
+
+big improvment to blue and green, but blue definitely still needs some work.
+
+white depth = 0.165018307169
+blue depth = 0.16401891597
+green depth = 0.164031864532
+red depth = 0.163999562179
+Chi2 for hypothesis of flat (b,g,r):
+92.0613904318 232.042470164 156.942942355
+fractional rms (b,g,r):
+0.00507683115596 0.00265855460887 0.00232459584938
+over the timescale of a transit, that's(b,g,r):
+0.0003784046525 0.000198156960911 0.000173265144648
+giving OTOO this significance per scale height (assume scale height ~ 1e-4) (b,g,r)
+0.26426736389 0.504650452552 0.577150125625
+
+------------------------------------------------
+make extinction coefficient a polynomial in time
+-------------------------------------------------
+
+-------------------------------------------------
+Tom marsh LCURVE
+-------------------------------------------------
+
+airmass vs flux plots show that the extinction coeficient is changing with time... lovely.
+so we should have a second order or so airmass trend with an extinction coeficient that's allowed to change linearly, say.
+
+POSSIBLE EVIDENCE OF RALEIGH SCATTERING!
+
+still a lot of noise in the transit depths, and I am not currently fitting for the limb darkening. Spectrum seems well behaved between 4200 and 8400.
+no obvious potasium or sodium signiture. But there is a rayleigh slope below 5000, I think...
+
+let's try allowing it to fit those coefficients, hopefully it's not too unphysical...
+
+clip the first 2 and last 3 bins
+
+adding limb darkening to the model has increased the noise of the spectrum, I think, but I don't think it has removed the trend - there does seem to be a
+trend towards deeper depths in the blue. Still no obvious evidence of sodium or potasium. this is ok, it's to be expected with the current levels of noise,
+I think.
+
+OF NOTE: THERE IS NOISE ON THE AIRMASS READING!!!!! not necessarily to the precision we need... oops, no, it wasn't that, I was inputting paramaeters without sorting, scratch that...
+
+Some of my transits have slants in them, particularly the blue ones, and I'm worred that this might be causing a bias which is mimicking the signal I want.
+how to get rid of these? Is my airmass trend not detailed enough? extinction changing faster than I can model? it does seem odd that it would only be linear,
+maybe a second order is required. see slanty.pdf (4350.pdf)
+trying to add another order to the extinction trend, we'll see...
+
+yes, that seemed to work. I worry that I may be overfitting... but the data do look good now.
+
+I want to work on cosmic removal now. I think. make median difference images?
+
+also, try extracting everything from same aperture. just to see how it looks.
+
+median combine difference images? (from sing et al 2014)
+
+this may not work... the difference images show that the stars do move a noticable ammount on the chip from frame to frame, leaving huge residuals that'll mask any cosmic
+
+but on the other hand, cosmic ray strike density is not super high, may not be as bad as I thought it was.
+
+a different approach? fixed apperture extraction, don't calculate a new wavelength solution each time. do spectra differences, this will show up any cosmics.
+
+possibly weaker than the other methods, but also possibly the simplicity will help.
+
+There will still very likely be a drift during the night, but it's ok, we have tools for that.
+
+the fixed aperturer spectra look better, in general, I think. it makes sense, since the time variable curve in the spectrum is NOT instrumental, it is the
+star being dispersed slightly in the sky in the paralectic direction, and of course the paralactic angle can change over time. the dispersion
+of the instrument is not changing.
+
+the output spectrum looks a lot cleaner, except for two points at 6850 and 6890 that failed to fit because the baseline for the first night was
+incorrectly calculated. this is annoying because at the moment it is obscuring the possibility of me seeing line broadened sodium/potasium.
+
+rayleigh slope is still clearly visible in alligned and non alligned versions of these data.
+
+and now since I'm looking at the same pixels every time it might be easier to remove cosmics...
+
+oh, also the huge potasium line I saw before is gone, that was due to a dodgy fit to a region that was telluric contaminated, I think.
+
+very large error bars when first order allignment not done. I think I need a better allignement in general. it might be possible to do a cross correlation now
+my extraction is more stable.
+
+cross correlate whole spectrum, or just parts?
+
+probably the whole thing, since some small regions will be approximately flat with no lines.
+
+the last 15 images from the first night are effected by very high sky background and do not seem to be reliable to me, I think they are confusing
+the baseline estimation.
+
+fitting code still needs a little work in removing some of the trends (particularly in far red and far blue) but it's looking in general more reliable now
+
+a nice output plot would be all the spectra for a specific wavelength bin plotted on top of each other. they look a lot nicer now that they have been cross
+-correlated within each bin.
+
+I think there is a second spot... between 666 and 700
+
+on inspection of the white light curves, I've also decided to mask the first half hour of both nights, it looks a bit messy. possible the system is settling down / poor atmosphere.
+
+eventually found that the error was due to the minimizer not being robust to the sometimes huge errors from small parameter shifts (e.g, changing t0 by a
+tiny percentage would suddenly give errors in the millions.
+
+may require a third pass to scale the error bars properly, but for now I'm getting rchi2 of 1 pretty much everywhere except the very blue.
+
+7250 did not fit correctly, looks like the same problem again. consider fixing the central time? or modifying it? assume that the standard in the code
+is to test jump sizes that are a fraction of the parameter size. we don't REALLY think t0 is going to change by that much, so perhaps this value
+should just be a modifier from the correct value?
+
+it looks like this might have happened on several occasions...
+
+let's fit t0 using our white light code and never change it again. in general though this is starting to look very positive! I think I can really
+begin to believe this signal at last!
+
+yeah, central transit time should not change with colour, this is fair.
+
+fix tt to: 2.45689254e+06
+
+ok, quite happy with the results now, but I'm still a bit uncomfortable that I have to include the linear drift. this makes me worry that some systematic
+might be getting me
+
+here are the results so far. I'm pretty happy with them!
+
+results (4150 - 8450)
+
+[4150, 4250, 4350, 4450, 4550, 4650, 4750, 4850, 4950, 5050, 5150, 5250, 5350, 5450, 5550, 5650, 5750, 5850, 5950, 6050, 6150, 6250, 6350, 6450, 6550, 6650, 6750, 6850, 6950, 7050, 7150, 7250, 7350, 7450, 7550, 7650, 7750, 7850, 7950, 8050, 8150, 8250, 8350, 8450]
+
+[0.16528267307702141, 0.17175133634335385, 0.16738710706900295, 0.1714643850504296, 0.16606750464953746, 0.17303480661778442, 0.16930036990850295, 0.16892110436944827, 0.16660817748759563, 0.1652128955497317, 0.16471507133214353, 0.16270961033970355, 0.16729505118254395, 0.16456316491843637, 0.16594754393431305, 0.1627679137103677, 0.16702217491788168, 0.16480636372433841, 0.1637405075641159, 0.16540902470496099, 0.16314631115244776, 0.1626721109894087, 0.16569746491432649, 0.16387087919040447, 0.16500157014553224, 0.16624193202974952, 0.16169826052947658, 0.16507692865197704, 0.16043182922566634, 0.16547002745175535, 0.16513881404176514, 0.16360746679865382, 0.16282407163743748, 0.16503984337081479, 0.16317749449267974, 0.16421939182060444, 0.16174226865789648, 0.16345321075680103, 0.16424258819528093, 0.16415961307192423, 0.1653293205671138, 0.166416560110836, 0.15983499659222963, 0.16643256597533448]
+
+errors
+[1.0, 0.0045905025103646219, 0.0065232870576734329, 0.0035278386998267141, 0.00066907148291678569, 0.0083244357203307289, 0.0033418243768255371, 0.0054680132987401367, 0.0063667131880127698, 0.0030348398044783972, 0.003949907959476545, 0.0052655708537936788, 0.00073046300015709882, 0.0039017534917979001, 0.0060025035751731862, 0.0029341046315833961, 0.0030215250815691617, 0.0062407186628745965, 0.002843689231445185, 0.0035407769967632408, 0.0005730995785799617, 0.0039608205372721056, 0.0027999346826689856, 0.0056436590745724052, 0.0066590704086073125, 0.0026547311987112918, 0.0029007074505050913, 0.002864916963224, 0.00027216885009295571, 0.0036261916769219503, 0.0028713132789040053, 0.0052571469861460336, 0.0012878236160786549, 0.0027546609634659758, 0.00064881090738863904, 0.0029120059778752891, 0.0012229123838154372, 0.0038921344611159399, 0.002798112165975526, 0.0007650759411281583, 0.0070186662358174999, 0.0031454559673468746, 0.0051411931382209413, 0.0029361972943556746]
+
+
+fit model from sing paper
+
+d ratio / d lambda = -3.30075754e-02
+
+so... multiply this by (mu*g)/(boltzman * T)
+
+surface gravity on wasp 52 is 0.7806 m/s**2
+
+1 atomic mass unit / Boltzmann constant =
+0.000120272362 s2 K / m2
+
+there's a mistake in the paper... it should be in terms of absolute radius of the planet, not a radius ratio.
+
+actual answer for gradient is: -1.32040584e+07
+
+old sing paper takes mu as 2.3 x mass of proton (the 2008 one with lecavelier des etangs, assumes molecular hydrogen + helium)
+
+giving a final answer of -2851. if we assume that this is rayleigh scattering, the temp is 712.5. probably too cold...
+
+0.000120272362*amu*g*gradient = alpha*T
+
+surface gravity is 0.7806
+
+using a slightly different fitting code (BFGS)
+
+I find:
+
+-1.33601492 +- 0.24058894 x10**7 for the gradient.
+
+so
+
+9.38846e-5*amu*gradient = alpha*T
+
+2.1593458e-4*gradient = alpha*T
+
+alpha*T = -2884.91820624 +-519.51471711
+
+(-2365.40348912 -> -3404.43292335)
+
+assuming that this is rayleigh, this gives our one sigma confidence interval of 591.35 -> 851 Kelvin.
+
+the zero albedo equilibrium temperature for the planet is 1315. our temp measure is 721.175 +- 130. out by over 5 sigma... really?
+
+something here doesn't feel quite right... we looked so similar to the other results by eye...
+
+ok, ok, ok, hang on... is this assuming H2 as the scatterer? perhaps this is how Sing came to the conclusion that is was a condensate?
+
+oh, wait, that wasn't the best fit... there's a better fit if you start the solution higher. -1.83789094e7 +- 0.34 instead of -1.33601492e7
+
+one sigma upper bound is 4702.8196 which gives a temperature of 1175.7049
+
+but this is zero albedo - if the albedo is 0.4 (hd189733b has been shown to have this albedo in blue) then the temperature is 1157, within my 1 sigma error bars
+
+it's marginal at the moment, but I think it is fair to say that this is not physical, and not inconsistent wih a rayleigh signiture...
+
+it is still possible that spots are a preffered outcome, but let's come back to that later.
+
+two parameters - spot coverage and spot temp contrast. there was a paper on this recently... check it out.
+
+adding spot model to test.
+
+assume star temp is 5000 - REMEMBER WHAT AMANDA SAID - THIS MIGHT NOT BE RELIABLE!
+
+best fit model for rayleigh scattering:
+
+39.4489956783
+1.0115127097
+
+3 parameters
+
+best fit model for star spots:
+
+51.0538421062
+1.30907287452
+
+3 parameters
+
+we have 43 data points.
+
+BIC TIME BITCHES!
+
+Just difference in chi squared, all other terms go.
+
+delata chi2 greater than 10, very strong evidence!!!!
+
+so, I do need to fix my errors, and I do need a BETTER SPECTRA MODEL for the star spots, the current one may not be fair...
+
+but currently the data favours a rayleigh slope! and I doubt that I can do much to change THAT level of difference in the model.
+
+out of interest, my best starspot model currently requires the planet to be 1.73729706e-01, about 10% larger than measured before
+
+also a starspot contrast of 775 K (seems reasonable, values between 500 - 1000 are reported in literature)
+
+and a starspot coverage of 20%... oops, I fixed that a little.
+
+
+leaving it completely unfixed it asks for a spot coverage of 93% with a temp contrast of 120K and a planet radius of 0.6... this simply isn't physical.
+
+just for giggles... flat model:
+
+chi2 81.5233523905
+rchi2 1.98837444855
+
+but it only has one parameter...
+
+k*ln(n) parameter? ln(43) = 3.76120011569
+
+difference is 2: 7.52240023138 
+
+so effective chi2: 74.0009521591
+
+delta chi2 still >> 10 for both models, flat is seriously disfavoured.
+
+had to made some very minor corrections to the mandal (changed the switch for analytic continuation to 1.0 instead of 0.99)
+
+but now with the 4 parameter limb darkening this is taking a fucking long time to fit!
+
+yeah, I think this is basically so degenerate that it'll be going forever.
+I think I may have to implement fixed limb darkening priors from the ATLAS paper, ala Sing.
+
+oh dear... this is not going well, probably something to do with overfitting! look how unphysical some of those are! (free_fit.pdf)
+
+ok, we either need to go back to a quadratic or use fixed values.
+
+I like the idea of fixing them. (sing 2010)
+
+from the wasp 52 discovery paper:
+
+Teff 5000 +- 100
+[Fe/H] 0.03 +- 0.12
+log(g) 4.5 +- 0.1
+turbulent velocity 0.9 +- 0.1
+
+lots of limb darkening info here from atlas9, is this what I need? http://zuserver2.star.ucl.ac.uk/~idh/NewGrids/
+this isn't going to do what I wanted... on the plus side, it does give me the stellar fluxes to do starspots properly.
+
+in fact, let's do that now instead of staring grumpily at limb darkening not fucking fitting.
+
+
+uggghh, fuck it, set all the limb darkening parameters to 0, what happens?
+this:
+[0.16564688109129569, 0.16994118582331114, 0.16407255714095573, 0.16503026394505485, 0.16569546316463918, 0.16919054288404439, 0.16361423670404882, 0.1648507232150363, 0.16463102198461851, 0.16299199688403185, 0.16085144853629654, 0.15899917322761239, 0.16427581677571318, 0.16151697423754235, 0.16220144776350651, 0.15916106867411661, 0.16362792845059287, 0.16177441856182675, 0.16126091554827074, 0.16357871263952833, 0.16175462829287027, 0.16099218202450885, 0.1638751506799058, 0.16213708539505162, 0.16331113372971826, 0.16410667444616472, 0.16041152107685444, 0.16373194930641663, 0.15973357449644437, 0.16495709084750507, 0.16406196557878183, 0.16327489550119947, 0.16205739006377609, 0.16422733456755498, 0.16375175771525821, 0.16266127733811467, 0.16104961641577767, 0.16382765505460448, 0.16227897022476653, 0.16397545862037952, 0.16196206910525535, 0.16243706766227634, 0.15763291274025817, 0.16961254518440652]
+[0.0073365564540961697, 0.001739769606463252, 1.0, 9.5367431640625e-07, 0.00095874724602302772, 0.0010275672417902791, 0.00093959067353672902, 0.00022119440087358243, 0.00079446056265235275, 0.00074745585463780058, 0.0007312044194234716, 0.0007195315050025112, 0.00059996915056515724, 0.00063141533741951472, 0.00027639060020308363, 0.00036607707853233745, 2.2214675896397652e-05, 0.00056607384083320292, 0.0015024284579422951, 0.00012447842919624679, 0.00054612793654081786, 0.00055237298478003148, 2.4973055675810894e-06, 0.00028376483918263147, 6.3259597594364163e-06, 0.00052823506391892099, 6.3532858467184384e-06, 0.00050965546128475792, 2.5556294630670576e-05, 0.0006723036429098784, 0.00057508690129491103, 0.00056327176465028369, 1.0, 0.00037157719401123237, 0.00010042789077630964, 0.00014556206981306482, 0.00073511358565535084, 1.9469909904746773e-05, 0.00075721121204789816, 0.00052267813880880467, 0.00067181480029609617, 0.00071444442498267758, 2.132480599880018e-06, 0.00036483745503151346]
+
+to the eye, looks extremely similar to the with limb darkening fit. I think this is good, as it suggests that it's not a bias introduced by the shape
+hopefully
+
+adding a proper model to take starspots into account ATLAS models + instrumental broadening.
+
+some sort of bug with my convolution code. every time it hits 10000, 16000, 32000, 64000....
+
+it's a change in resolution of the spectrum! 
+FIXED
+
+ok, what's the limiting resolution of the slit? According to the spec page, the slit resolution is R ~ 900 for 0.5 arcsec, and 450 fo 1.0 arcsec.
+so with a 27 arcsecond slit ( was actually measured at 28) we should expect R ~ 16
+
+I've taken a bunch of ATLAS spectra with the following parameters:
+
+P00v00
+
++0 metalicity, 0 turbulent velocity. my star has vturb 1.0, but I really doubt this'll make much difference at my resolution. will check this later.
+
+taking g45 (log(g) = 4.5)
+
+the main star is read as 5000K, what are spots? we don't really know, but I can step up in grids to find out.
+
+made a nice plot to demonstrate the relative effects of starspots. ATLAS stellar atmosphere models degraded to instrumental resolution.
+very slight difference with turbulent velocity, but I don't really think it changes the interpretation. Makes it very obvious the gradient that
+gets added, but not obvious way how it could appear flat in the 5000 - 8000 region if the effect is strong enough to replicate the slope below that.
+
+T = 5000
+starspot - varies
+input transit depth: 0.164
+
+
+fitted a real starspot model - the best fit is a 250 K contrast - physical? with a 41% spot coverage - again, I'm not sure that this is physical...
+bringing the 'baseline' size of the planet down to 0.1567.
+
+I think this model is edging towards the unphysical
+
+experement with new fitting constraints (first pass is constrained by radius)
+
+[0.16680444811364747, 0.17601295871239925, 0.16724504363952752, 0.172748571865251, 0.17138161528920931, 0.17519277068378852, 0.17701169184256915, 0.17297843457435305, 0.16903898205979037, 0.16788057116491506, 0.16841952548929184, 0.16522130022604489, 0.17166783139871644, 0.16817687445574267, 0.16954659027779098, 0.16285435482263441, 0.16799619280451372, 0.16952571319089857, 0.16495067257193258, 0.16469390749609197, 0.16217324606525854, 0.16416022711515407, 0.16850033048809659, 0.16303026658501443, 0.1683842296764875, 0.16912837659806615, 0.16699274591666877, 0.16500801079802946, 0.15833422438097292, 0.17305876501803194, 0.16609428662631909, 0.16307950884055256, 0.16320941847808154, 0.16946711760582223, 0.16147053373470874, 0.16437282616860527, 0.16160800995552466, 0.16156091853367993, 0.16379423965583892, 0.16226001812420013, 0.1681780575281302, 0.17307147269477932, 0.1674352474743597, 0.17551753570368098]
+[0.0047894374720687943, 0.00011149218372788593, 0.0032989682060495609, 0.0020590081687786258, 0.0025262545126211828, 0.0013635472733167695, 0.0036547046081544699, 0.00058881683976401411, 0.00078648146849236546, 0.0012780602239508289, 0.00035467154571983112, 0.00088114367591140619, 0.0004787620833290098, 5.3214856879840794e-05, 0.00076501393747896115, 0.0012375571672192994, 0.00099294482089817056, 0.00060328538142841062, 0.0016477132013057042, 0.0011265726511136506, 0.0012066804570451224, 0.0047737152816808908, 0.0010859657590985066, 0.00076451004657625537, 0.00072558188744388985, 0.0006952813659193435, 0.0006207743151210775, 0.00063624078882178008, 0.00054990351768565164, 0.00059828739456232983, 0.00047699282287107442, 0.001535065458169074, 0.0007116870130609665, 0.001075465373452481, 0.0025888379086569167, 0.00062166874304480236, 0.00076846133690876089, 0.0012360894753452941, 0.0013002148021271213, 0.0012771444772492061, 0.001667190820095059, 0.00080802892767444683, 0.0017164181327022931, 0.0011292231641281908]
+
+made a mistake with the starspot!
+
+my resolution is controlled by seeing, not by the size of the slit.
+
+seeing was ~ 1.5 arcsec after defocusing, so...
+
+R = 300
+
+best attempt yet, with errors:
+
+[0.16796034316652628, 0.16542004415801448, 0.15965915410399178, 0.17469896785322542, 0.17311889487610191, 0.1774767062726888, 0.17449488921144282, 0.17080655354958901, 0.16551499236146733, 0.16654406075055275, 0.16641475638759193, 0.17004158287179225, 0.17197045106055336, 0.16749500849320509, 0.16627751249768008, 0.16510223216622802, 0.16741296641042544, 0.16725515936302832, 0.16364363965602888, 0.16658729968853467, 0.16251050865447975, 0.16427899592657011, 0.1657333933247743, 0.16117028360353244, 0.16752299998339581, 0.16281247908833038, 0.16645973058350594, 0.16792519659568866, 0.16439023667786212, 0.17107689379412933, 0.16739468732515925, 0.16899091260239713, 0.16492832384996783, 0.16748280335308935, 0.16441885400979273, 0.16786584555683662, 0.16247275589946325, 0.15603670839862971, 0.16891648448678689, 0.16589244720909957, 0.16529350250979813, 0.17158128998667385, 0.16693159430428925, 0.1793803732056658]
+[0.0075732600757547662, 0.0033794243146258204, 0.0017622408236481213, 0.0014971276671329546, 0.001963618420923146, 0.0018703309059925038, 0.00148179244891133, 0.00092883993911013036, 0.0015483448003511453, 0.00074070718147357538, 0.012895051290285219, 0.0026604155424706545, 0.00069063540266893042, 0.0010771870521873155, 0.0011078854069301288, 0.0006296578122492191, 0.0013647763599855881, 0.00053073009118416556, 0.00055416441822840026, 0.001013223176540257, 0.0010239931800476152, 0.00069137754664720002, 0.00086127334765570703, 0.001030398283429546, 0.0007320459406732451, 0.00060869301234261933, 0.00053214213067040688, 0.0008012076089213211, 0.0010162730526387814, 0.00057834824527695067, 0.00054520074293535334, 0.00025637595790119471, 0.00065786876613569095, 0.0014310292348160684, 0.00075182207440023334, 0.00092681940016866443, 0.00080294469528868089, 0.00082266167878809358, 0.00077974874615559036, 0.00070951452781978469, 0.004045094404915189, 0.00045971925703509745, 0.00094072460172003641, 0.00060613049842037775]
+
+this has a much better fitting routine that removes outliers before calculating errors.
+
+try again, with errors, bin sizes twice as big (200 A)
+
+[0.16358259382918083, 0.17478057649505885, 0.17667093370902362, 0.1685904731138069, 0.1654579435331506, 0.16812705268266223, 0.16665866334039164, 0.16558447371040819, 0.1651082508258318, 0.16764092119283702, 0.16427067144203858, 0.16448147251632358, 0.16422096984879098, 0.16781067581570583, 0.16764287144565884, 0.16595166901600819, 0.16758675730390846, 0.16544904368044794, 0.16801226520808749, 0.16501001312513697, 0.16881855251724689]
+[0.0010953027628463339, 0.001800320560184676, 0.0014055939622057384, 0.0010728749872703795, 0.00061492170419052386, 0.0005665859898825958, 0.00051710272694658471, 0.00056753645410913896, 0.00080296105837070295, 0.0011464720328043299, 0.00051481555537027555, 0.0016320502897338867, 0.00040218589131929544, 0.00040083988650551001, 0.00043229573084518094, 0.00054629410555331187, 0.00074107300665810004, 0.00051214022042820782, 0.00044516644828600135, 0.00089957755096949348, 0.001042758040036555]
+
+one more time - but allow the addition time varying component.
+
+so far looks a lot better, but I am worried about overfitting.
+
+5900 looks better.
+6300 looks better - this does seem to lead to superior looking data - but at what cost?
+
+big bins with the 'fix' (inclusion of linear trend)
+
+[0.16516494192011427, 0.16570429897486336, 0.1688198033916421, 0.176356839375228, 0.1684966434808452, 0.16717069848850333, 0.16859357026459992, 0.16732351189898023, 0.16594033252164245, 0.16673638927812487, 0.16316671113810596, 0.16484111000656793, 0.16528856146270465, 0.16447017028875935, 0.16173365327928302, 0.16762920802683387, 0.164684670512143, 0.16350560110839008, 0.16336326104578305, 0.1623825495952774, 0.16202810535502207, 0.16638437364378447]
+[0.0049358802848947069, 0.0015037600685561133, 0.0018199051653848988, 0.00082385962200961138, 0.00062784760239799299, 0.019045417496173434, 0.00055454620408870085, 0.00091905156774248957, 0.00048124364078161555, 0.0004368637235034895, 0.00040434155606480104, 0.00084227597004479771, 0.00044374764835070389, 0.00036947607297304019, 0.0005321200914917846, 0.000591034987316468, 0.0026265246297485978, 0.00019504494717628484, 0.00089105131186897955, 0.00048513972163425668, 0.00073993568310141023, 0.001526055856668287]
+
+small bins 'fixed'
+
+[0.16093348289022508, 0.16252829398218666, 0.16869418203845923, 0.15920182490634288, 0.17051009539221049, 0.16658179000158696, 0.17318175778032227, 0.17734505979702381, 0.17167078492044488, 0.16681327555874659, 0.16776851302129614, 0.16705303410287101, 0.16533810373352184, 0.16673796900039634, 0.16539653376925068, 0.16773044569901208, 0.16423925295228975, 0.16769985677817748, 0.16662519015642874, 0.16466465018996385, 0.16490459439259897, 0.16290794734241934, 0.16327500625701571, 0.16708167113704919, 0.16196453423108034, 0.16849520941273158, 0.16645946306517448, 0.16832645508790692, 0.16517203216865314, 0.15866998410207406, 0.17059066071368709, 0.16560303073154506, 0.16330203271790938, 0.16283142065010706, 0.16718917147340423, 0.16116625169715346, 0.1630980144281523, 0.16002983361705134, 0.1628462494165808, 0.16315704769679404, 0.16266997097860653, 0.16529188394819416, 0.17091485769539594, 0.15509230892024087, 0.17413954878772611]
+[0.0038277831927198531, 0.008607471367606194, 0.0022687207042140041, 0.0031553617808599455, 0.0014974613476894806, 0.0024417200227933298, 0.0014112987782280565, 0.0018858846439613022, 0.0022956037979770679, 0.0011852583277812039, 0.00063136026868493744, 0.00073033041795868509, 0.0018264813804511394, 0.0018552165314566548, 0.0012619294174511784, 0.00066893264840807497, 0.0010274441854990462, 0.00081274490078945942, 0.00077476157772600343, 0.0006013688511372333, 0.0012616442655005329, 0.00028614194293090015, 0.0022458841883780346, 3.5875847227112317e-05, 0.00060726321421837972, 0.00078280175868697269, 0.00056526161283341266, 0.0016645319646754234, 0.00054890168664373804, 0.00056616316722637365, 0.0010306863851082826, 0.00076862098760313601, 0.0010083563244418956, 0.0011764824759624129, 0.00091850908892734885, 0.0013309444273203873, 0.0013343590029763085, 0.0024373462800224926, 0.0012072856430863613, 0.00095929006767587967, 0.00067484108667277868, 0.00080316934847818506, 0.00015693953674675762, 0.0015713805555295163, 0.0021683963523877708]
+
+the first bin, 4050, is too noisy and definitely needs to go.
+
+what is the difference if I do not remove the suspected spot on the second night?
+(the first night was definitely dodgy and had to go)
+
+Without night2 'spot' masked
+
+[0.15788848598080588, 0.15970803920687371, 0.1661367323514559, 0.16029336229400432, 0.17222045261351496, 0.16625112807322265, 0.17288249163804301, 0.17800248730131585, 0.17200001310932253, 0.16725863472762253, 0.16817728073337132, 0.16651682050559613, 0.16585516150096888, 0.16618753837339656, 0.1663413790624767, 0.16906878481409165, 0.1653750987628399, 0.16821726898531816, 0.16809525490105579, 0.16334840318742028, 0.16649132455174745, 0.16393850866974499, 0.16379521271600914, 0.16774535776524996, 0.1627584553031492, 0.16806895172766845, 0.16827177350499697, 0.1686051933260484, 0.16505103787471667, 0.15907842732692928, 0.17280669479911429, 0.16606373404720948, 0.16314837188546899, 0.16408376150111958, 0.16681523414940111, 0.1614627732573847, 0.16426873632871844, 0.1616344411386153, 0.1646680532422366, 0.16500341083947725, 0.16247371143303699, 0.16590637445904247, 0.17070870694868651, 0.15534866105525016, 0.17434049935238638]
+[0.031850772165688039, 0.0065735650397375197, 0.0017666377520007845, 0.0020610781611702204, 0.0020123472979057051, 0.0017256601447884663, 0.0010123533168443183, 0.0017711788710667571, 0.00072495837487156765, 0.00093195723170481893, 0.00068546460577115209, 0.0008232179408547756, 0.0009804939352299378, 0.00066507643533061684, 0.00080230366765559474, 0.00097248063015842865, 0.00058913463662857467, 0.0011137411801519688, 0.00047494269999884416, 0.00061402955722478019, 0.0010670820616322288, 0.00056441928251238266, 0.00078471414759092803, 0.001049445520646316, 0.00048960308087393593, 0.00051038992564171604, 0.0012399580439576075, 0.0010203966976441011, 0.00070528240458010575, 0.0023472411429160799, 0.00046355945167382459, 0.00047389942777380093, 0.00051643386924251158, 0.00056556992758504071, 0.00054213727424313682, 0.000550392232980918, 0.0027392188586824926, 0.00092553063779190797, 0.0032675717862146189, 0.00058217192994424393, 0.00058613745176309972, 0.00080583439759568908, 0.0013465291981184224, 0.003295490292885585, 0.00034756374094984727]
+
+slightly less noisy, error bars smaller (compare spectrum_standard.pdf to without_spot.pdf). try offsetting all bins by 50, same results?
+
+[4100.0, 4200.0, 4300.0, 4400.0, 4500.0, 4600.0, 4700.0, 4800.0, 4900.0, 5000.0, 5100.0, 5200.0, 5300.0, 5400.0, 5500.0, 5600.0, 5700.0, 5800.0, 5900.0, 6000.0, 6100.0, 6200.0, 6300.0, 6400.0, 6500.0, 6600.0, 6700.0, 6800.0, 6900.0, 7000.0, 7100.0, 7200.0, 7300.0, 7400.0, 7500.0, 7600.0, 7700.0, 7800.0, 7900.0, 8000.0, 8100.0, 8200.0, 8300.0, 8400.0, 8500.0]
+[0.16367706996444309, 0.16316400819788157, 0.17124907784645274, 0.15587719591366839, 0.17097358383420919, 0.17465543352654192, 0.16994379611552396, 0.17780084955977429, 0.16828039139610787, 0.16689675885704927, 0.16763601262431807, 0.16633712989317254, 0.16574183418189808, 0.1674516527023093, 0.16781517259783316, 0.1685619969383729, 0.16644423493416, 0.16780408431784469, 0.16785485175795356, 0.16260258717914886, 0.1657421581227321, 0.16284659417934177, 0.16852733252233063, 0.16361502774158571, 0.16819765067393513, 0.16622660170712014, 0.16850320732663274, 0.16256712903281256, 0.16194037442472925, 0.16380357112574137, 0.16990543349156548, 0.16358117522827201, 0.16632625660933809, 0.16386558653100453, 0.16434061416120171, 0.16398854495107312, 0.16140986287784437, 0.15995276326571364, 0.16278253084559804, 0.16544578757221634, 0.15997113810539579, 0.17090519459565712, 0.1643553728750092, 0.17214505129632207, 0.18126132766315564]
+[0.0024659687175144006, 0.0019015054911496016, 0.020175031340520976, 0.0018149832460383568, 0.0024290445111514354, 0.0013684851779253132, 0.0015604228872982497, 0.0010609818790331567, 0.00078752383079693314, 0.0014130169012471815, 0.0031913444575659535, 0.00099318035345196559, 0.00071358029307193392, 0.00030269271064159182, 0.00078510272181978469, 0.00055582023630357366, 0.00080608113316594219, 0.00059386682931045632, 0.00050398358541724848, 0.0010099921620299215, 0.00014891332114549307, 0.00057840912126166791, 0.0010161611085154421, 0.00039357194760180952, 0.0010358656814054709, 0.00075104359969394572, 0.00051817082476473555, 0.0018255246301916701, 0.00046987617836170305, 0.00051952148088301635, 0.00064466560610227199, 0.00053539444766685759, 0.00050111388340845096, 0.00076418489312514567, 0.0013412778100423076, 0.0010065178776817805, 0.00063486272172797776, 0.0027182932960172173, 0.00061461242997024783, 0.00084631371474900511, 0.00072212056112740933, 0.0007249314075742485, 0.00046392924665139166, 0.00053476574534761347, 0.0014949302798780947]
+
+compare (spec_with_offset.pdf) to (spectrum_standard.pdf)
+
+let's do a negative as well, why not?
+
+[4000.0, 4100.0, 4200.0, 4300.0, 4400.0, 4500.0, 4600.0, 4700.0, 4800.0, 4900.0, 5000.0, 5100.0, 5200.0, 5300.0, 5400.0, 5500.0, 5600.0, 5700.0, 5800.0, 5900.0, 6000.0, 6100.0, 6200.0, 6300.0, 6400.0, 6500.0, 6600.0, 6700.0, 6800.0, 6900.0, 7000.0, 7100.0, 7200.0, 7300.0, 7400.0, 7500.0, 7600.0, 7700.0, 7800.0, 7900.0, 8000.0, 8100.0, 8200.0, 8300.0, 8400.0]
+[0.17672244013897631, 0.16367706996444309, 0.16316400819788157, 0.17124907784645274, 0.15587719591366839, 0.17097358383420919, 0.17465543352654192, 0.16994379611552396, 0.17780084955977429, 0.16828039139610787, 0.16689675885704927, 0.16763601262431807, 0.16633712989317254, 0.16574183418189808, 0.1674516527023093, 0.16781517259783316, 0.1685619969383729, 0.16644423493416, 0.16780408431784469, 0.16785485175795356, 0.16260258717914886, 0.1657421581227321, 0.16284659417934177, 0.16852733252233063, 0.16361502774158571, 0.16819765067393513, 0.16622660170712014, 0.16850320732663274, 0.16256712903281256, 0.16194037442472925, 0.16380357112574137, 0.16990543349156548, 0.16358117522827201, 0.16632625660933809, 0.16386558653100453, 0.16434061416120171, 0.16398854495107312, 0.16140986287784437, 0.15995276326571364, 0.16278253084559804, 0.16544578757221634, 0.15997113810539579, 0.17090519459565712, 0.1643553728750092, 0.17214505129632207]
+[0.010517228672768258, 0.0024659687175144006, 0.0019015054911496016, 0.020175031340520976, 0.0018149832460383568, 0.0024290445111514354, 0.0013684851779253132, 0.0015604228872982497, 0.0010609818790331567, 0.00078752383079693314, 0.0014130169012471815, 0.0031913444575659535, 0.00099318035345196559, 0.00071358029307193392, 0.00030269271064159182, 0.00078510272181978469, 0.00055582023630357366, 0.00080608113316594219, 0.00059386682931045632, 0.00050398358541724848, 0.0010099921620299215, 0.00014891332114549307, 0.00057840912126166791, 0.0010161611085154421, 0.00039357194760180952, 0.0010358656814054709, 0.00075104359969394572, 0.00051817082476473555, 0.0018255246301916701, 0.00046987617836170305, 0.00051952148088301635, 0.00064466560610227199, 0.00053539444766685759, 0.00050111388340845096, 0.00076418489312514567, 0.0013412778100423076, 0.0010065178776817805, 0.00063486272172797776, 0.0027182932960172173, 0.00061461242997024783, 0.00084631371474900511, 0.00072212056112740933, 0.0007249314075742485, 0.00046392924665139166, 0.00053476574534761347]
+
+(spec_minus_offset.pdf)
+
+well, that was dumb. of COURSE it looks the same, you've just offset by exactly one bin... let's do 200 again without spot masking.
+
+[4100.0, 4300.0, 4500.0, 4700.0, 4900.0, 5100.0, 5300.0, 5500.0, 5700.0, 5900.0, 6100.0, 6300.0, 6500.0, 6700.0, 6900.0, 7100.0, 7300.0, 7500.0, 7700.0, 7900.0, 8100.0, 8300.0]
+[0.16198369194043519, 0.16458595810730817, 0.16929305832975097, 0.17642224828554715, 0.17075893639442172, 0.167184126635751, 0.16846019261522283, 0.16727633655857316, 0.16641163122933766, 0.16638606107343043, 0.16447163801392337, 0.1659595191674049, 0.16569349545243778, 0.16508181566668687, 0.1618419776306903, 0.16800972006214931, 0.16499007006574393, 0.16390080131374507, 0.16378675590487962, 0.16373546785608806, 0.16426892324320638, 0.1659484303341503]
+[0.0023644369502292739, 0.0012981277894602787, 0.00051952022649596314, 0.00065108044491394418, 0.00058937211517202329, 0.00056269171653920702, 0.00093709800469547516, 0.00066771796566806208, 0.00038964069641791744, 0.00039738705896492655, 0.00029115619246652681, 0.00068737957314824133, 0.00074604218959434439, 0.00064428493025280129, 0.0012670859402076544, 0.00031447980363070549, 0.00035619921095150715, 0.00040754518645238537, 0.00097456179847171549, 0.0021260522983182024, 0.00093681996848496679, 1.1151778311738591e-05]
+
+and again, with an offset...
+
+[4200.0, 4400.0, 4600.0, 4800.0, 5000.0, 5200.0, 5400.0, 5600.0, 5800.0, 6000.0, 6200.0, 6400.0, 6600.0, 6800.0, 7000.0, 7200.0, 7400.0, 7600.0, 7800.0, 8000.0, 8200.0, 8400.0]
+[0.16702214362983214, 0.16885630043144123, 0.17110871581558904, 0.17410090795278008, 0.16779057680782664, 0.16548348247586886, 0.16629233887789441, 0.16713792721159848, 0.16760367312391203, 0.16534661084059221, 0.16376031639198227, 0.16561945068058856, 0.16735282662221732, 0.16897518828591135, 0.16484826373452144, 0.16467677594313121, 0.16573720043504228, 0.16270240222360902, 0.16243632158788138, 0.16453926659160714, 0.16842730134129719, 0.17363377024169693]
+[0.0017079503247552034, 0.0010952131102083184, 0.0015466425116225234, 0.00062423510592091473, 0.0014016490531636599, 0.00093607045920686741, 0.00094233937641263039, 0.00039491039471738757, 0.0013874506561238273, 0.00076516993811688149, 0.00084445744617816197, 0.0003298652930662749, 0.00073522831294642679, 0.0037099197768950326, 0.00074307373758313023, 0.00073171691456337012, 0.00047051171646687976, 0.00038937757894525106, 0.00043944108357372958, 0.00049177239943717693, 0.0010666830537146568, 0.00097354313914841187]
+
+(spec_big_offset.pdf)
+
+plotted the 4 on '4_samplings.pdf', shows clearly that 100 A is probably too small a bin to use, the systematic scatter is a lot higher. let's switch to 200 as standard now.
+
+200 with slight offset
+
+[4150.0, 4350.0, 4550.0, 4750.0, 4950.0, 5150.0, 5350.0, 5550.0, 5750.0, 5950.0, 6150.0, 6350.0, 6550.0, 6750.0, 6950.0, 7150.0, 7350.0, 7550.0, 7750.0, 7950.0, 8150.0, 8350.0]
+[0.16438998966718441, 0.16292086031142614, 0.17404540889096151, 0.17527173868410931, 0.16839683196993563, 0.1687108474859583, 0.16666218283690393, 0.16850662138005348, 0.16732269317115908, 0.16452060131108978, 0.16407300418031109, 0.1656670553130449, 0.16701405353791485, 0.16470693795024907, 0.16321469617708739, 0.16677603763880727, 0.16435814168547669, 0.16440239978832727, 0.16126843166817767, 0.16379059044330882, 0.16637693357528249, 0.16829205422063861]
+[0.0014677425256233621, 0.0019913730320414349, 0.00084927712959451899, 0.00045627135296443688, 0.00053988432391965046, 0.00016408226374507146, 0.00091377367520757962, 0.0005413642216536862, 0.00042292819162793866, 0.00035887336645863704, 0.00095572659352360304, 0.00046694907005795193, 0.00031308690721790016, 0.0010286307188387537, 0.00053442708805418468, 0.0011848619741476759, 0.00072259558957006782, 0.00055270202765339983, 0.00043381083495879597, 0.00041143605489277999, 0.00059307549052923592, 0.0010427756162943668]
+
+now do a slight offset the other way...
+
+[4050.0, 4250.0, 4450.0, 4650.0, 4850.0, 5050.0, 5250.0, 5450.0, 5650.0, 5850.0, 6050.0, 6250.0, 6450.0, 6650.0, 6850.0, 7050.0, 7250.0, 7450.0, 7650.0, 7850.0, 8050.0, 8250.0]
+[0.16342610482135625, 0.17012907188192766, 0.16877399140265481, 0.17221668503071619, 0.17303667657458482, 0.17010468798958781, 0.16704251690619187, 0.16751538287363876, 0.16795841789542118, 0.16736204241702221, 0.16490622098502916, 0.16572582315079176, 0.16601584982690518, 0.16639732981886177, 0.162177132656216, 0.16670188687688622, 0.16509913790466776, 0.16383385570642744, 0.16326185776504754, 0.1657587888598886, 0.16266224780671756, 0.16793642163387215]
+[0.0023439790320342853, 0.0037430947885805955, 0.0014055642142206408, 0.0027184148217533764, 0.00055598146683066981, 0.0010111862792667511, 0.00046880040351225352, 0.00057903467223157712, 0.00078989356392211458, 0.00041382818481157054, 0.00039048998952220083, 0.0001111524433153743, 0.00041005269172789463, 0.00047893217576166954, 0.0011361340262121455, 0.00077110381396763362, 0.00044541618750059591, 0.00041507192623515963, 0.00042669539369660965, 0.0010059195223710007, 0.00041400831941715017, 0.000128212672826256]
+
+what's our scale height?
+
+H = kT/Mg
+
+H = 672365.097m
+
+H(as fraction of star) = 0.001
+
+surface gravity = 7.07012214024 m/s**2
+
+I was wrong earlier! was giving it in units of earth acceleration! damn it!
+
+0.000120272362*amu*g*gradient = alpha*T
+
+0.00195578266*gradient = alpha*T
+
+zero albedo temp is 1315
+
+1.48728719825*1e-6*gradient = alpha
+
+according to our error bars(which I don't believe) median error is about 0.65 scale heights.
+
+try to calculate the theoretical gradient again, in case there's a mistake.
+
+gradient*(mu*g)/(boltzman * T) = alpha
+
+mu = 2.3* atomic mass unit = 3.84703009 × 10-27
+g= 7.07012214024
+boltzman constant = 1.3806488 × 10-23
+
+0.00197001385*gradient = alpha*T
+
+the 'correct' answer, alpha = -4 and T = ~ 1315K gives a gradient of
+
+-3.74527348 x 10e-7
+
+look at each of your parameters to determine if there is a trend
+
+depth
+
+(obvious)
+
+airmass_2
+
+airmass effects become more important in blue (expected) and at the very reddest bin (expected? not sure if I trust that one anyway)
+
+norm_1 and norm_2
+
+... not sure if these matter, but for the record, steady gradient, followed by rapid drop of in red and blue
+
+t_11
+
+gradient + rapid jump in red and blue
+
+t_21
+
+same deal.
+
+gamma_0
+
+very noisy, but a trend with wavelength. expected.
+
+gamma_1
+
+noisy, no obvious pattern... but my 'deep' point is an outlier. important?
+
+p10
+
+pretty flat apart from edges - suggests a problem
+
+p11 
+
+flat apart from the points contaminated by the line
+
+p12
+
+flat apart from the points contaminated by the line
+
+p20
+
+pretty flat apart from edges - suggests a problem
+
+p21
+
+flat apart from edges + contaminated region
+
+p22
+
+flat apart from edges + contaminated region
+
+
+all in all, petes idea that it's caused by aperture losses in my outer bins seems reasonable.
+
+remedy by changing size of bins, or tracing appertures?
+
+is it possible that the errors in the line regions are caused by errors in background subtraction?
+
+doing a new extraction.
+
+increase size of extraction apertures, doubled to +-50 and +-100
+
+except this crashes iraf... go for 50% bigger.
+
+comparison of 50% bigger... looks possibly worse. the outliers on the edge portions of the chip are STRONGER after increasing the windows.
+
+on inspection, there doesn't seem to be anything 'crazy' about my window sizes.
+
+towards the very red edge of the spectrum the background estimate is likely cocked up by hitting the vignetting, but I can see no obvious reason why blue would
+go wrong.
+
+so let's try decreasing the width and see if that helps... let's scale the pixel increase/loss linearly
+
++-33 and +-17
+
+no major improvement obvious from decreasing (if anything it makes the blue end more dodgy) 
+
+BUT, I just realised that I did not trace the spectrum when I did my wider slits.
+I will try that next.
+
+used my wider setting (75 and 37.5) WITH tracing on (for the first apperture)
+
+the spectrum to me looks a little cleaner, (scatter seems lower, less of a 'drop' after the spikey point) but it's still apparently kicking up a linear trend in
+time. error bars also smaller on some of the spectrum points.
+not entirely sure what to make of this.
+I have a sneaking suspicion that my background subrtaction might be at fault (this would explain cock ups in the line filled regions)
+I want to make an oversampled plot now to investigate systematics.
+
+let's clip out that pesky starspot first.
+
+result... looks like a steady gradient with a huge absorption feature... NOTHING makes that one point go away. starting to wonder if this is a really strong
+line feature instead of a rayleigh slope...
+
+[4100.0, 4300.0, 4500.0, 4700.0, 4900.0, 5100.0, 5300.0, 5500.0, 5700.0, 5900.0, 6100.0, 6300.0, 6500.0, 6700.0, 6900.0, 7100.0, 7300.0, 7500.0, 7700.0, 7900.0, 8100.0, 8300.0]
+[0.16467669960844511, 0.16752236173520707, 0.16761813181252774, 0.17536911239802488, 0.16782854352498974, 0.16639956203412212, 0.167786056081694, 0.16745895070570263, 0.16545011355553127, 0.16620200322569961, 0.16445015397201562, 0.16684315094174818, 0.16501204402010761, 0.16523548085642031, 0.16143241197219943, 0.16883641141044209, 0.16425510780550581, 0.16139720881651762, 0.16458884721981501, 0.1603529982721342, 0.16288274456484703, 0.16122791905958642]
+[0.0032850209034405004, 0.0016421821568600246, 0.0014605687659728051, 0.0013665338870047837, 0.00074456795732682514, 0.00050333400112308939, 0.00044652629420183757, 0.00043312787096567957, 0.0007390903103922801, 0.00086567878779657856, 0.00034708440452889964, 0.00037286085345412826, 0.00027627300337904488, 0.00083492857747157129, 0.00043023293150526838, 0.00038670270362520725, 0.0013337878739479038, 0.00072714152077762051, 0.00043356039215986013, 0.00091944294858933959, 0.00042285119091309162, 0.001005899636087617]
+
+with an offset
+
+[4150.0, 4350.0, 4550.0, 4750.0, 4950.0, 5150.0, 5350.0, 5550.0, 5750.0, 5950.0, 6150.0, 6350.0, 6550.0, 6750.0, 6950.0, 7150.0, 7350.0, 7550.0, 7750.0, 7950.0, 8150.0, 8350.0]
+[0.16698308742498705, 0.16553423382598761, 0.17278604663123323, 0.17553676884153854, 0.16749080015634274, 0.1680244307934822, 0.16621461814481844, 0.16751421636819877, 0.16598714906015441, 0.16536708321850996, 0.16444196821328633, 0.16440053668002783, 0.1664871787456994, 0.16404463231717814, 0.16242952434490107, 0.1657936918687242, 0.16405809967198173, 0.16298039965680358, 0.16179208910893247, 0.16316250900332838, 0.16463101265476993, 0.16427417466555788]
+[0.0023087484020069184, 0.001256156154544417, 0.0027981972751126342, 0.00067431941229968912, 0.0014552701383991219, 0.00038147223761980198, 0.00086596600675598967, 0.00040768652523394622, 0.00046474702732525886, 0.00041393586580118323, 0.00039550703030633954, 0.00083056933451645118, 0.00075602071452771146, 0.00074257022161068186, 0.00074456568169934583, 0.001619989280653314, 0.0014997256101577663, 0.00053277617398320815, 0.0004822151213161104, 0.0005827912069191689, 0.00071475767596348235, 0.001249587538005996]
+
+another offset
+
+[4200.0, 4400.0, 4600.0, 4800.0, 5000.0, 5200.0, 5400.0, 5600.0, 5800.0, 6000.0, 6200.0, 6400.0, 6600.0, 6800.0, 7000.0, 7200.0, 7400.0, 7600.0, 7800.0, 8000.0, 8200.0, 8400.0]
+[0.17267071504863346, 0.16375660690817331, 0.17250273694315435, 0.17539277422959015, 0.16584464984860972, 0.16292320265383115, 0.16674903287774229, 0.16655583595634546, 0.16691950427150945, 0.16488302870435806, 0.16268014722227903, 0.16486137607930904, 0.16655581482301424, 0.16578548442865257, 0.16399979404721954, 0.16460337926760224, 0.16489735950255227, 0.16059576841958526, 0.16072237950222656, 0.16319785254499738, 0.16667101633131393, 0.17656410033444922]
+[0.0018042214866651667, 0.002278147836314632, 0.00094192205420817147, 0.0019036328449517075, 0.00077433756389108535, 0.00051494623720711372, 0.00042967329271703349, 0.0004452134251599929, 0.00037036181099106194, 0.00074886441170364634, 0.0003843784204979759, 4.866616018831192e-05, 0.00030325210438959072, 0.00071799035502510399, 0.0002704461052637293, 0.00060263495696447902, 0.00039688424581529419, 0.00051648609769658457, 0.0046525698841498762, 0.00042502554730936535, 0.0034360598254446332, 0.0016255197232705749]
+
+and the last offset
+
+[4250.0, 4450.0, 4650.0, 4850.0, 5050.0, 5250.0, 5450.0, 5650.0, 5850.0, 6050.0, 6250.0, 6450.0, 6650.0, 6850.0, 7050.0, 7250.0, 7450.0, 7650.0, 7850.0, 8050.0, 8250.0, 8450.0]
+[0.16969416979880889, 0.16808729144222631, 0.17236898855794278, 0.17168587082621814, 0.16695538855388539, 0.16518275417241352, 0.16748629118908279, 0.16732826721891889, 0.16625390608271631, 0.16396115464531336, 0.16434402103725565, 0.16548012540847726, 0.16596492877966723, 0.16077373458902619, 0.16630652147362607, 0.16562806161867663, 0.16226712336143068, 0.16389405796628279, 0.16044188976293042, 0.16097438215584592, 0.16360803607523899, 0.17345302265441165]
+[0.0022743508958037576, 0.0021054207081530889, 0.0010415580975965586, 0.0053429886093475827, 0.0010597183991717784, 0.00045569803859390415, 0.00072114490822797227, 0.00042340531525329245, 0.00069055093346046166, 0.00054754882327699152, 0.00046224179595618921, 0.0012699175718558402, 0.00077526724546073112, 0.000436601145508782, 0.00052172003687296707, 0.00078390010064887446, 0.001200566073446435, 0.00083928542565497779, 0.0012136710694011681, 0.00047328428869100245, 0.00061702909988196593, 0.00073845299043285434]
+
+hmmm...
+
+results are that it's perhaps a bit noisier, but the trends are reduced in size. it's possible a better background subtraction would help.
+
+what is striking to me is that no matter what I do, that signal at 4500 remains, as well as that slope.
+
+a good test for spectral nature would be to use smaller bins, see what happens.
+
+that's...
+
+pretty noisy
+
+[4050.0, 4150.0, 4250.0, 4350.0, 4450.0, 4550.0, 4650.0, 4750.0, 4850.0, 4950.0, 5050.0, 5150.0, 5250.0, 5350.0, 5450.0, 5550.0, 5650.0, 5750.0, 5850.0, 5950.0, 6050.0, 6150.0, 6250.0, 6350.0, 6450.0, 6550.0, 6650.0, 6750.0, 6850.0, 6950.0, 7050.0, 7150.0, 7250.0, 7350.0, 7450.0, 7550.0, 7650.0, 7750.0, 7850.0, 7950.0, 8050.0, 8150.0, 8250.0, 8350.0, 8450.0]
+[0.14236997453014932, 0.16509769701456731, 0.17334859025702781, 0.16260327023064988, 0.16706874807388403, 0.17172366308629974, 0.17207657491804126, 0.17688251787408335, 0.17426733295540528, 0.16309433487038485, 0.16657165379725122, 0.16385435831045533, 0.16218457763382579, 0.16933826564000387, 0.16546383028535827, 0.16821040024769107, 0.1647433459199738, 0.16680434497563462, 0.16908869847361171, 0.164565232821761, 0.16616334685005332, 0.16204137949466466, 0.16285050792904729, 0.16716481330705582, 0.1612592927132227, 0.16791069506890821, 0.16704577082155422, 0.16822049913997669, 0.16380278516086624, 0.16009744600031045, 0.17171605604924928, 0.16422587945339318, 0.16363433899046625, 0.16341357719801866, 0.1637566892486888, 0.15874589839635897, 0.1646753680363707, 0.16194833679951712, 0.16347522987050664, 0.16406101066580281, 0.16260799037855733, 0.16966158553777252, 0.16928056781671572, 0.15179856008880974, 0.17483580219009456]
+[0.002580326696185041, 0.0098855406788120152, 0.0031832664703484986, 0.0034252926220999409, 0.0030910366500241063, 0.0013701473795545472, 0.017124461325874436, 0.0020507281669228682, 0.0011476413962894824, 0.0013160318095996281, 0.003727796789125183, 0.00066091604817747243, 0.00069873432228246342, 0.00067244473066251607, 0.0010535135735624621, 0.00092588078860733234, 0.00083559640666099424, 0.00057197340697834732, 0.001703697624644744, 0.00049366098256409979, 0.00051499491387613011, 0.00050024700524184222, 0.00094932386469313108, 0.00079822447241850605, 0.0010015614555398001, 0.0025683777185277947, 0.00047886817359904543, 0.0005042144753964504, 0.00050370189437415726, 0.0012161136656164263, 0.00030669179432004241, 0.00074307168103580684, 0.0011289200625786396, 0.00083708163935654312, 0.00044243286752947191, 0.00081291479308741321, 0.00047254291066949403, 0.00067174568921585188, 0.0012791403954139956, 0.00064261302649955775, 0.014041400881370457, 0.00075524423460816825, 0.0015585034054431447, 0.004272038673473387, 0.0010662350449520957]
+
+I would be interested in seeing it overlaid with the 200 A bin data.
+
+not particularly enlightening, a lot of scatter, no features made particularly clearer, but of course, the peak at ~ 4800 still there.
+
+the peak point appears to be 4750.pdf
+
+anything unusual about that region of spectrum?
+
+the fit looks sensible, one of the better ones really
+
+ok, now for another big test that I should really have done earlier... what happens if I delete all of the first night or all of the second night?
+
+get same signal? (this would be a clincher if true)
+
+go back to 200 A bins.
+
+let's delete all of the first night first.
+
+now deleting all of second night... a little sketchy since we've also deleted the starspot from the first night, not much transit to go around!
+still, we do what we must.
+
+first night only results
+
+[4100.0, 4300.0, 4500.0, 4700.0, 4900.0, 5100.0, 5300.0, 5500.0, 5700.0, 5900.0, 6100.0, 6300.0, 6500.0, 6700.0, 6900.0, 7100.0, 7300.0, 7500.0, 7700.0, 7900.0, 8100.0, 8300.0]
+[0.17054978064670506, 0.1706029490462502, 0.16948793701448098, 0.18189570934026239, 0.16641636276616889, 0.16479355538944221, 0.15903118902192229, 0.15972562062304554, 0.16046646810022575, 0.16493764187948218, 0.15786464656639396, 0.16233277880332936, 0.16282895917208023, 0.1560360198204436, 0.15489509251803452, 0.16662891884053718, 0.15470941790818932, 0.15910120541313583, 0.17044008214782591, 0.15238568529832469, 0.16035386333992985, 0.16177144693265963]
+[0.026801542283649483, 0.010976998428215978, 0.0049335218641454581, 0.0017876854013539429, 0.0010741519283891041, 7.2590491237075914e-05, 0.0036167811514701102, 0.0002061202487377889, 0.0014822872794850249, 0.0009973737526175377, 0.00084943252547336188, 0.0026468240380831546, 0.0010387101389059408, 0.00072451548609552994, 0.0015224792450453043, 0.0024785490029007331, 0.0021303988976226736, 0.0007910785695971859, 0.0017106104287857031, 0.00081612829072887094, 0.0016625700821862317, 0.00087331387194709332]
+
+second night only result
+
+[4100.0, 4300.0, 4500.0, 4700.0, 4900.0, 5100.0, 5300.0, 5500.0, 5700.0, 5900.0, 6100.0, 6300.0, 6500.0, 6700.0, 6900.0, 7100.0, 7300.0, 7500.0, 7700.0, 7900.0, 8100.0, 8300.0]
+[0.16216423956418438, 0.16848978544968884, 0.16367496801458925, 0.17539961874592688, 0.16817886726150105, 0.16705786771999701, 0.16947104174196323, 0.16765363308983766, 0.16671446614328803, 0.16729336684824703, 0.16566355175835246, 0.16732660585241257, 0.16589656725223284, 0.16636078079835684, 0.16280094462481101, 0.16927090895436137, 0.16668427827349672, 0.16174907049703727, 0.16401497465632822, 0.15954335857604396, 0.1642834623013264, 0.15728963003040733]
+[0.0023800068110867972, 0.0028863808825998678, 0.0015873492980740154, 0.0052910801947787288, 0.0011892349193249349, 0.00062624505723820744, 0.00096126641570380158, 0.0010620261824919905, 0.000598329209581685, 0.0020924670049284446, 0.00044629553458607564, 0.00034549462671528937, 0.00048163859670435053, 0.00075216098032081626, 0.0053299735501474363, 0.0006469689583607105, 0.0010085315220716919, 0.0010200062922300656, 0.00064765917979288021, 0.00055336212557519624, 0.00052615298901155017, 0.0012403915798310477]
+
+feature is on both nights! but certainly more significant on the first
+
+http://0-mnras.oxfordjournals.org.pugwash.lib.warwick.ac.uk/content/443/3/2391.full.pdf+html
+
+nice paper talking about how to deal with starspots.
+
+PRISM model originates here:
+http://www.astro.keele.ac.uk/jkt/pubs/2013MNRAS.428.3671T.pdf
+
+there's definitely a chance that I could measure the temperature, or even the rotation
+period of the star this way. neat.
+
+prism code seems quite straightforward
+
+http://www.astro.keele.ac.uk/~jtr/fprism.pro
+
+transcribe it into python?
+
+done - have a python version of prism that can be incorporated into the code!
+
+check that prism without spots and mandal and agol give the same results.
+
+problem: This code is fundamentally simultated and DISCRETE. Does not give itself well to the fitting methods I am currently using.
+
+used the gemc module that came with prism. after 1000 iterations I get this for the first night in white light.
+
+      0.16553588 +/-       0.0024395752
+      0.15719667 +/-       0.0027057201
+      0.59861016 +/-         0.36304095
+     -0.12142841 +/-        0.028739422
+       85.306517 +/-         0.24362734
+    -0.028952820 +/-      6.6244947e-05
+       1.7437856 +/-          1.3768321
+       60.047980 +/-          6.7130609
+       14.154113 +/-          7.5256352
+      0.79985745 +/-        0.031485423
+       342.00000
+       11880.000
+     0.028787879
+lowest Chi Sqrd Value =       3.3098523
+      0.16604956 +/-       0.0024395752
+      0.15681637 +/-       0.0027057201
+      0.62151647 +/-         0.36304095
+     -0.11168408 +/-        0.028739422
+       85.344062 +/-         0.24362734
+    -0.028931087 +/-      6.6244947e-05
+       1.7666361 +/-          1.3768321
+       60.455008 +/-          6.7130609
+       15.553330 +/-          7.5256352
+      0.78298185 +/-        0.031485423
+
+found a decent fit for the second night, too
+
+      0.16253452 +/-      0.00044747998
+      0.15199634 +/-       0.0028047213
+      0.55080442 +/-       0.0034666041
+    -0.033672146 +/-        0.017365894
+       85.858744 +/-         0.23722028
+    -0.014691900 +/-      4.2023220e-05
+       58.798889 +/-          7.7977802
+       40.919357 +/-          1.2732759
+       13.705814 +/-          1.7036335
+      0.57899533 +/-        0.056676593
+       10.000000
+       240.00000
+     0.041666667
+lowest Chi Sqrd Value =       3.3115232
+      0.16272317 +/-      0.00044747998
+      0.15160619 +/-       0.0028047213
+      0.54870048 +/-       0.0034666041
+    -0.032685499 +/-        0.017365894
+       85.856490 +/-         0.23722028
+    -0.014703950 +/-      4.2023220e-05
+       55.454883 +/-          7.7977802
+       40.326410 +/-          1.2732759
+       13.137857 +/-          1.7036335
+      0.54659976 +/-        0.056676593
+
+tried again, used 100 points and 48(!) walkers. much better convergence.
+
+      0.16073346 +/-      0.00055899073
+      0.15724128 +/-       0.0011389369
+      0.82967921 +/-        0.042464223
+     -0.13377609 +/-        0.011241851
+       85.606060 +/-         0.10042548
+    -0.014836647 +/-      5.7779677e-05
+      -26.574735 +/-          13.623258
+       62.547333 +/-          6.6933397
+       1.9600834 +/-          2.1101924
+      0.78535938 +/-        0.029984659
+       130.00000
+       4320.0000
+     0.030092593
+lowest Chi Sqrd Value =       2.7301394
+      0.16102316 +/-      0.00055899073
+      0.15709856 +/-       0.0011389369
+      0.81166536 +/-        0.042464223
+     -0.13086030 +/-        0.011241851
+       85.598773 +/-         0.10042548
+    -0.014837559 +/-      5.7779677e-05
+      -24.638650 +/-          13.623258
+       63.068714 +/-          6.6933397
+       2.0397288 +/-          2.1101924
+      0.78146298 +/-        0.029984659
+
+
+better result for the first night
+
+      0.16366148 +/-      7.7665462e-05
+      0.15756213 +/-      7.1869249e-05
+      0.53147646 +/-       0.0018283386
+    -0.066221244 +/-       0.0037159137
+       85.289401 +/-       0.0041415807
+    -0.028848131 +/-      2.4819575e-06
+      -1.7594853 +/-       0.0074975894
+       62.884343 +/-        0.027253501
+       12.048329 +/-        0.013545600
+      0.74871680 +/-       0.0015083787
+       1.0000000
+       3840.0000
+   0.00026041667
+lowest Chi Sqrd Value =       3.0224933
+      0.16366136 +/-      7.7665462e-05
+      0.15756091 +/-      7.1869249e-05
+      0.53148262 +/-       0.0018283386
+    -0.063266473 +/-       0.0037159137
+       85.289378 +/-       0.0041415807
+    -0.028847875 +/-      2.4819575e-06
+      -1.7601771 +/-       0.0074975894
+       62.883175 +/-        0.027253501
+       12.041340 +/-        0.013545600
+      0.74670851 +/-       0.0015083787
+
+let us try forcing the second night to have the same depth as the first night, but allow spot.
+
+medium good
+
+      0.16239156 +/-      0.00013394787
+      0.15470437 +/-      0.00013072419
+      0.55612831 +/-       0.0037054346
+   -0.0028640009 +/-        0.011291192
+       85.687024 +/-       0.0088541999
+    -0.014601563 +/-      1.8022585e-05
+       53.375334 +/-         0.77685338
+       61.588431 +/-         0.70481890
+       17.594243 +/-         0.78437670
+      0.88623906 +/-       0.0053476337
+       5.0000000
+       480.00000
+     0.010416667
+lowest Chi Sqrd Value =       2.9052604
+      0.16247991 +/-      0.00013394787
+      0.15468250 +/-      0.00013072419
+      0.55789569 +/-       0.0037054346
+   -0.0051830597 +/-        0.011291192
+       85.686353 +/-       0.0088541999
+    -0.014577320 +/-      1.8022585e-05
+       53.263788 +/-         0.77685338
+       61.748601 +/-         0.70481890
+       17.656864 +/-         0.78437670
+      0.88613077 +/-       0.0053476337
+
+let's do a longer one for giggles, as that one was not as good in the end as the earlier one.
+ok, it's definitely a bad thing to let the sex stage have more than 10 iterations, everything gets stuck in a local minima
+
+I might be expecting too much of the fit on the second night. there is a slant pre ingres, why wouldn't there be a slant during transit?
+
+may need to consider a new extraction.
+
+(of course it is still possible that I've done a shit job of detrending this part of the lightcurve)
+
+I'm becoming less convinced that the second night data can be explained by a spot, it may just be systematics in the curve.
+night one is definitely a large spot event though.
+
+allow it to fit without even trying for a spot
+
+      0.16126687 +/-      0.00083507283
+      0.15804094 +/-       0.0012792490
+      0.87288856 +/-         0.20568450
+     -0.19069262 +/-        0.063822229
+       85.521210 +/-         0.13669826
+    -0.014843285 +/-      6.1224434e-05
+       119.00000
+       4320.0000
+     0.027546296
+lowest Chi Sqrd Value =       2.6186772
+      0.16126740 +/-      0.00083507283
+      0.15796738 +/-       0.0012792490
+      0.86680573 +/-         0.20568450
+     -0.19552519 +/-        0.063822229
+       85.527256 +/-         0.13669826
+    -0.014841724 +/-      6.1224434e-05
+
+easily the best fit so far, and no good evidence of spots. it does disturb me that the depth is noticably different from the first night, and the slant
+could easily be introducing a bias.
+
+try first night one more time, with same free ranges?
+
+I want to try another 'sigh' extraction. same very large apertures as before, but this time I do want the trace to be reset and recentered each time.
+want a direct comparison.
+
+then if that STILL looks bad, worry about background subtraction.
+
+having trouble thinking about the wavelength callibration... what did I decide was best?
+
+best so far for night 1 (used 1000 genes, 10 sex, 10 non sex)
+
+      0.16596539 +/-       0.0017989409
+      0.15898892 +/-       0.0012760519
+      0.65804591 +/-        0.051927396
+     -0.31456326 +/-        0.084191591
+       85.122536 +/-         0.14096401
+    -0.028839843 +/-      8.1986124e-05
+      -1.1734527 +/-          1.3859513
+       44.617953 +/-          7.6707354
+       10.935749 +/-          2.4644178
+      0.79363323 +/-        0.028802533
+       8.0000000
+       10000.000
+   0.00080000000
+lowest Chi Sqrd Value =       3.0181438
+      0.16598202 +/-       0.0017989409
+      0.15896937 +/-       0.0012760519
+      0.65794940 +/-        0.051927396
+     -0.31492361 +/-        0.084191591
+       85.119340 +/-         0.14096401
+    -0.028844446 +/-      8.1986124e-05
+      -1.1158468 +/-          1.3859513
+       44.913135 +/-          7.6707354
+       10.939604 +/-          2.4644178
+      0.79823888 +/-        0.028802533
+
+going to run it again after adjusting the allowed ranges, some of my values were close to the edge.
+
+best so far for night 1 (used 1000 genes, 10 sex, 90 non sex)
+
+      0.16344817 +/-      0.00076405805
+      0.15971932 +/-      0.00074357627
+      0.51710050 +/-        0.036918306
+      0.21362435 +/-        0.094312182
+       85.317046 +/-        0.077187063
+    -0.028908456 +/-      5.0322244e-05
+      0.75017589 +/-         0.52322904
+       43.911797 +/-          4.9558929
+       17.029061 +/-          1.5308234
+      0.81866857 +/-        0.026921672
+       1705.0000
+       90000.000
+     0.018944444
+lowest Chi Sqrd Value =       3.1182087
+      0.16349687 +/-      0.00076405805
+      0.15975377 +/-      0.00074357627
+      0.51635981 +/-        0.036918306
+      0.22516517 +/-        0.094312182
+       85.319406 +/-        0.077187063
+    -0.028911890 +/-      5.0322244e-05
+      0.90366275 +/-         0.52322904
+       43.830376 +/-          4.9558929
+       17.269206 +/-          1.5308234
+      0.81956615 +/-        0.026921672
+
+best so far for night 2 (used 1000 genes, 10 sex, 90 non sex)
+
+      0.16306100 +/-      0.00077264742
+      0.15634082 +/-      0.00049023746
+      0.94426940 +/-        0.091695271
+     -0.41811691 +/-         0.11286351
+       85.604770 +/-         0.10448391
+    -0.014684627 +/-      8.3595580e-05
+       59.382099 +/-          2.3651819
+       48.924085 +/-          4.4128177
+       22.062314 +/-          1.9288629
+      0.94007068 +/-        0.041522437
+       17.000000
+       10000.000
+    0.0017000000
+lowest Chi Sqrd Value =       2.5078619
+      0.16306021 +/-      0.00077264742
+      0.15634212 +/-      0.00049023746
+      0.94324520 +/-        0.091695271
+     -0.41691303 +/-         0.11286351
+       85.605155 +/-         0.10448391
+    -0.014683030 +/-      8.3595580e-05
+       58.994941 +/-          2.3651819
+       51.794505 +/-          4.4128177
+       22.588859 +/-          1.9288629
+      0.94275856 +/-        0.041522437
+
+the fact that the depth varies by a few percent between the two nights is concerning. There seems to be only weak evidence of a spot
+on the second night. I will repeat the experiment with no spot. This will take a few hours. best case scenario it comes out looking a bit closer to night 1.
+
+there is quite clearly still some red noise in the light curves, possibly an artifact from extraction.
+
+what is my temperature contrast?
+
+flux contrast 0.8
+
+F = 4pi r**2 sigma T**4
+
+F1 = 4pi r**2 sigma T1**4
+
+F2 = 4pi r**2 sigma T2**4
+
+F2/F1 = (T2/T1)**4
+
+T2 = T1*(F2/F1)**0.25
+
+T_cont = T1*(1 - (F2/F1)**0.25)
+
+~250 K
+
+I don't really think this is going anywhere. fix the data quality/ detrending before coming back to this. should probably include the detrending in the gemc code for consistency
+
+long fit for night 2 with the limb darkening constrained...
+
+      0.16100879 +/-      0.00039128369
+      0.15803742 +/-      0.00057816146
+      0.54348012 +/-        0.019084213
+      0.18531264 +/-        0.019181292
+       85.552572 +/-        0.047592655
+    -0.014625562 +/-      4.5160302e-05
+       55.469471 +/-          1.8509680
+       39.191841 +/-          4.1969594
+       23.408081 +/-          1.1529438
+      0.89871243 +/-        0.025963620
+       1420.0000
+       90000.000
+     0.015777778
+lowest Chi Sqrd Value =       2.5788300
+      0.16096392 +/-      0.00039128369
+      0.15804053 +/-      0.00057816146
+      0.53939592 +/-        0.019084213
+      0.19049396 +/-        0.019181292
+       85.549049 +/-        0.047592655
+    -0.014627267 +/-      4.5160302e-05
+       55.422744 +/-          1.8509680
+       39.085157 +/-          4.1969594
+       23.286335 +/-          1.1529438
+      0.89893897 +/-        0.025963620
+
+disturbingly slightly shallower than night one, but the spot is at least looking slightly more physical... still thing it's a bit hot though, with a contrast of 0.9
+
+ALLOWING TRACE TO MOVE GIVES A MORE SENSIBLE LOOKING OUTPUT. 
+took a trace each time, also allowed center to move.
+
+using very wide aperture.
+
+want to compare this with an extraction with different background estimation, I still think there's something dodgy with mine (evidenced by the spikes around known stellar lines)
+
+WAIT
+
+Cross correlation looks worse in the new extraction, not certain all regions are reliable.
+
+made a new directory, 4back_large_move
+
+4th order background estimation insead of 1st order, see if it makes any difference.
+it has absolutely wrecked the data quality, it's basically unusable now. Whilst this is disapointing, it reinforces the importance of using a proper background subtraction.
+I want now to consider the idea of using a much larger background region, map the intensity levels over the ccd better.
+
+also the trace could potentially use some work.
+
+hmm, what if I tried to fit a function to a flat? that would tell me what kind of function I need.
+
+yeah, let's examine our flat in this same window/aperture.
+
+my favourite solution so far:
+
+-648:-206 134:173 -819:-1037
+
+4th order chebyshev, no repeats.
+
+seems to do a decent job across the whole frame, regions likely to be star contaminated removed.
+
+the psf of both stars looks symetrical.
+I think this is about as good as I'm going to get it
+
+used this technique with large apertures to make 'advanced_background' extraction
+
+looks much worse. chi squares are typically in the 3ish region instead of 1ish, the individual lightcurves are noisy and unpleasant to look at.
+
+background extraction is obviously very important, and my simple approach of linea fit to +- 100 regions so far seems to be the best. But what are the
+chances that it's optimal?
+
+needs more attention!
+
+another note - need to prevent the limb darkening coeficients from being greater than 1, this is one of the reasons the first two wavelength bins give anomalously
+low depths
+I think.
+
+how best to do this without making the fitting code throw a fit?

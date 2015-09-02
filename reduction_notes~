@@ -1,0 +1,181 @@
+ok, so there's a 32k offset, not really sure why, but let's roll with it...
+
+first and last:
+
+r2125448_cal.fit
+r2125700_cal.fit
+
+take a difference image, just out of interest.
+
+looks there has been a gradual rotation of the dispersion element throughout the night, though they've at least been kept seemingly very central.
+
+run reduction.py to make the master callibration frams and callibrate the data.
+
+let's have a go at an iraf reduction.
+
+iraf
+
+cd WHT_08_2014_data/quick_look1
+
+noao
+
+specred
+
+apall @data_list
+
+interactive fit
+
+aperture one 4th order fit, niter 5. nice fit, funky residuals under 500
+
+aperture two 4th order fit, niter 10. under 500 still looks funky
+
+RESISING APERTURES: GOOD IDEA OR NOT?
+
+DEFAULT BACKGROUND APPERTURES DO NOT LOOK GOOD: NEED TO FIND A WAY TO DO THESE RELIABLY FOR ALL IMAGES
+
+pass iraf options on the command line to avoid a prompt every single time
+
+extension number 2 looks the most well behaved on the output files, not so many huge negative values. certainly comparable though.
+
+extension 3 is the sky background estimate.
+
+BANDID1 = 'spectrum: background fit, weights variance, clean yes'               
+BANDID2 = 'spectrum: background fit, weights none, clean no'                    
+BANDID3 = 'background: background fit'                                          
+BANDID4 = 'sigma - background fit, weights variance, clean yes'                 
+
+you have to make a list of the same arc callibration with the same length as your data list
+(these are multi-extensions this time for some reason)
+write as wave_ref[1] and let iraf add the .fit itself, it complains if you write wave_ref.fit[1] in a filelist,
+but not on the command line. CONSISTENCY IRAF! THAT'S ALL I FUCKING ASK
+
+turn off all background subtractions and interactive elements, give it a list of your science data images (it will automatically find their appertures in the database)
+then it will go through and extract a reference spectrum for each one.
+
+
+used the high dispersion version of arc_r2125699_cal as a reference spectrum, now do the rest with reidentify
+
+reidentify works well on all arc images, now need to apply this dispersion correction to all data images
+
+have to add the extra header keyword 'REFSPEC1'=arc_name to all headers, wrote a python script to make this a little cleaner because IRAF is a nightmare to edit files like that.
+
+need to use scopy to break out the appertures that I'm interested in to stop it from just being 1... sarith is not behaving as I'd expect it to, it's just dividing like for like, so everything is one.
+
+TELL IT TO IGNORE APERTURES, OTHERWISE IT DOESN'T DO ANYTHING BECAUSE THE APERTURES DON'T MATCH
+
+white_light_first_try does not look very good, looks reasonably flat (airmass mostly divided out) but quite structured and not white.
+
+My first guess would be that this is a reduction error on my part, allowing IRAF to choose the appertures is probably not a very good idea.
+
+start again from the APALL step, this time forcing the same apertures each time.
+
+I want a nice wide aperture, my objects are both bright so sky shouldn't really be a huge problem, and this minimizes the problem of variable seeing
+
+chosen -22.24,+22.24 on the first aperture.
+background nice and big 25-50, -25 - -50
+
++40 -40 for aperture 2
+
+100 - 150, -100 -150 for background
+
+aperture 1 looks a little odd... may need to come back to this
+aperture 2 potentiall a little stange looking also, maybe these apertures are too big?
+
+second_try_white looks exactly the same as the first... must have made a mistake.
+
+the problem is when going from apps to app1 and app2 with scopy. must have taken the wrong apperture somehow
+
+there's some crap in the first 50 minutes, not sure what the cause is, it's possible I made a mistake somehow and
+left these with the old appertures.
+
+start over from scratch, the first 50 appertures are incorrect, this includes when the transit starts.
+
+Correct step list:
+
+solve wavelength solution (should only need to be done once)
+
+apall
+dispcor
+
+
+it occurs to me I may have forgotten the re-identify step... though this shouldn't make any difference, I've not moved the appertures, just made them wider.
+
+need to add errors from sky subtraction - though in principle this shouldn't be such a big fraction, should it?
+
+the general setup looks sensible now. but even in the first 10 spectra there's a lot of variation in the ratios that look odd.
+
+looking at the plot of all spectra, there's clearly one or two where sky subtraction has gone badly wrong, but it doesn't look systemic.
+
+looking at the plot of the first 10 ratios, seems *sane* between 4500 and 8500
+
+and sums should be variance weighted. this will lower the contributions from absorption lines and the like.
+
+much noisier than I would have liked.
+
+looking at the raw lightcurves, it's clear that the comparison star is not acting in a well behaved manner, there is unpleasant structure as well as an inflated noise signal.
+If I had to guess, I'd say that the aperture I'd used on this star was too wide. go back and change it.
+
+moving to second reduction folder.
+
+the only thing I'll change is the aperture of the comparison star. shrunk to
+
++- 11 instead of 25 or whatever it was before.
+
+
+INSTRUCTIONS!!!! READ THESE!!!
+
+APALL: make sure to turn background fitting ON, recenter ON, but resize OFF.
+
+APALL WAVELENGTH CAL: make sure to turn background fitting OFF, recenter OFF, resize OFF, reference: @data_list
+
+IDENTIFY: the first extracted spectrum, make sure the wavelength solution is sensible (this time it's arc_r2125448_cal.fits)
+
+REIDENTIFY: all remaining spectra using the first spectrum as a template
+
+PYTHON INSERT_HEADER SCRIPT: so that dispcor knows to asign the correct wavelength solutions
+
+DISPCOR: input is the apperture spectra, spec_//@data_list will be the wavelength calibrated files
+
+SCOPY: start breaking out the actual spectra into a usable format. spec_ -> app1 and spec_ -> app2, remember to set the correct apperture in the options
+
+SARITH: make the ratio files using the app1 and app2 output, there's a bug in this script, so make sure to set "ignorea" to yes, otherwise nothing happens.
+
+WSPECTEXT: finally, make the output files into something that you can read. need to spit out the ratio files and the two appertures. probably sky too, but we'll get to that later.
+
+
+
+checked again. DEFINITELY pointing at the right stars, at the right time. Why can't I see anything?
+
+reduced aperture 2 (the target) to -12 to +12. the asymetry is interesting. hopefully this will cut out a bit the noise that seemed to mostly effect apperture 2.
+
+this, if anything, actually looks a bit worse now. I think the wider apperture for the target star was actually better.
+
+I'm not going to get a publication worthy plot in the next day. come back to this later.
+
+the main problem, I'm quite sure, is currently with apperture 2. it's too noisy considering it's brighter than app1. working hypothesis: either bad background subtraction or apperture overflow.
+
+The transit IS visible (in aperture 2) put the S/N is all wrong considering how bright the targets are
+
+
+--------------------------------------------------------------------------------
+
+Have we considered that maybe IRAF knows what it's doing? Allow it to define its own aperture each time.
+This is optimal extraction. My concern is that whilst it maximises the S/N ratio it might
+not keep the same ratio of the flux, and since we're looking for effects on the order
+of 1 part in 10**4 this might be important
+
+
+compare the results of fixed appertures to variable appertures (.pngs). the fixed apperture appears to me to be much nicer. note that these plots are both
+raw and are in no way detrended.
+
+variable_appertures_raw_curves.png
+variable_appertures_raw_curves_problem.png displays that one of the images appears to have not processed properly, and since I do not yet have error rejection
+routines this biases the whole fit.
+
+fixed_appertures_raw_curves.png
+
+note the very subtle airmass trend visible in the red and blue curves, add the polynomial model at the same time as the transit model to remove this.
+
+_________________________________________________________________________________________________
+
+IRAF SPECTRUM ARITH HAS RUINED EVERYTHING SOMEHOW, (INTERPOLATION OR SOMETHING?) DIVIDING MANUALLY GIVES A MUCH BETTER RESULT
